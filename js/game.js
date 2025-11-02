@@ -495,6 +495,9 @@ function updatePhysics(deltaTime) {
             playSound('gameOver');
             stopMusic();
 
+            const username = localStorage.getItem('username') || 'Viajante';
+            submitScore(username, config.particlesAbsorbed);
+
             ui.showGameOver({
                 level: config.level,
                 wave: config.wave.number,
