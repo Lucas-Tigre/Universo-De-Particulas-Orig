@@ -41,7 +41,8 @@ export async function submitScore(username, score) {
     try {
         const { data, error } = await supabase
             .from('leaderboard')
-            .insert([{ username, score }]);
+            .insert([{ username, score }])
+            .select();
 
         if (error) {
             console.error('Erro ao enviar pontuação:', error);
