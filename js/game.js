@@ -13,7 +13,6 @@ import { displayLeaderboard } from './ui.js';
 import * as particle from './particle.js';
 import * as enemy from './enemy.js';
 import * as projectile from './projectile.js';
-import { submitScore } from './supabaseService.js';
 import * as explosion from './explosion.js';
 import { checkLevelUp as checkLevelUpLogic, showUnlockMessage, playSound, initSoundSystem, unlockAudio } from './utils.js';
 import { playMusic, stopMusic, preloadMusic } from './audio.js';
@@ -464,14 +463,11 @@ function updatePhysics(deltaTime) {
         const dx = player.x - proj.x;
         const dy = player.y - proj.y;
         if (Math.sqrt(dx * dx + dy * dy) < player.size + proj.size) {
-            if (player.invincibleTimer <= 0) {
-                player.health -= proj.damage;
-                playSound('hit');
-                player.invincibleTimer = config.players[0].invincibilityCooldown;
-                if (proj.onDeath === 'explode') {
-                    state.setExplosions([...state.explosions, { x: proj.x, y: proj.y, radius: proj.explosionRadius, damage: proj.damage, duration: 30, color: proj.color }]);
-                    playSound('enemyDefeat');
-                }
+            player.health -= proj.damage;
+            playSound('hit');
+            if (proj.onDeath === 'explode') {
+                state.setExplosions([...state.explosions, { x: proj.x, y: proj.y, radius: proj.explosionRadius, damage: proj.damage, duration: 30, color: proj.color }]);
+                playSound('enemyDefeat');
             }
             currentProjectiles.splice(i, 1);
         }
@@ -479,12 +475,10 @@ function updatePhysics(deltaTime) {
     state.setProjectiles(currentProjectiles);
 
     state.explosions.forEach(exp => {
-        if (player.invincibleTimer > 0) return;
         const dx = player.x - exp.x;
         const dy = player.y - exp.y;
         if (Math.sqrt(dx * dx + dy * dy) < exp.radius) {
             player.health -= exp.damage * (deltaTime / 16.67);
-            player.invincibleTimer = config.players[0].invincibilityCooldown;
         }
     });
 
@@ -494,16 +488,7 @@ function updatePhysics(deltaTime) {
             config.gamePaused = true;
             playSound('gameOver');
             stopMusic();
-
-            const username = localStorage.getItem('username') || 'Viajante';
-            submitScore(username, config.particlesAbsorbed);
-
-            ui.showGameOver({
-                level: config.level,
-                wave: config.wave.number,
-                particlesAbsorbed: config.particlesAbsorbed,
-                enemiesDestroyed: config.enemiesDestroyed,
-            });
+            ui.showGameOver({ level: config.level, wave: config.wave.number, particles: config.particlesAbsorbed, enemies: config.enemiesDestroyed });
         }
     }
 }
