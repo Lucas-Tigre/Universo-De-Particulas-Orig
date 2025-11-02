@@ -1,6 +1,14 @@
+/**
+ * @file Ficheiro de utilidades com funções de ajuda para som, notificações e lógica de jogo.
+ * @module js/utils
+ */
+
 import { config } from './config.js';
 
-/** Toca um efeito sonoro pré-carregado. */
+/**
+ * Toca um efeito sonoro pré-carregado.
+ * @param {string} soundName - O nome do som a ser tocado (e.g., 'absorb', 'levelUp').
+ */
 export function playSound(soundName) {
     try {
         if (config.soundEnabled && config.soundEffects[soundName]) {
@@ -12,14 +20,16 @@ export function playSound(soundName) {
     }
 }
 
-/** Exibe uma mensagem de notificação animada na tela. */
+/**
+ * Exibe uma mensagem de notificação animada na tela.
+ * @param {string} message - A mensagem a ser exibida.
+ */
 export function showUnlockMessage(message) {
     const el = document.createElement('div');
     el.className = 'unlock-message';
     el.textContent = message;
     document.body.appendChild(el);
 
-    // Animação de entrada e saída da mensagem.
     setTimeout(() => {
         el.style.opacity = '1';
         el.style.transform = 'translate(-50%, -50%) scale(1)';
@@ -37,18 +47,12 @@ export function showUnlockMessage(message) {
     }, 10);
 }
 
-/** Carrega todos os efeitos sonoros e as preferências de som do usuário. */
+/**
+ * Carrega todos os efeitos sonoros e as preferências de som do utilizador.
+ */
 export function initSoundSystem() {
     const soundPaths = {
-        // NOTA: Os seguintes arquivos de áudio estão faltando. As chamadas foram comentadas para evitar erros 404.
-        // Para reativar os sons, adicione os arquivos .mp3 correspondentes na pasta 'assets/audio/'.
-        // absorb: 'assets/audio/absorb.mp3',
-        // enemyDefeat: 'assets/audio/enemy_defeat.mp3',
-        // levelUp: 'assets/audio/level_up.mp3',
-        // gameOver: 'assets/audio/game_over.mp3',
-        // hit: 'assets/audio/hit.mp3',
-        // respawn: 'assets/audio/respawn.mp3',
-        // bossRoar: 'assets/audio/boss_roar.mp3',
+        // NOTA: Os seguintes ficheiros de áudio estão em falta. As chamadas foram comentadas para evitar erros 404.
     };
 
     for (const [key, url] of Object.entries(soundPaths)) {
@@ -58,7 +62,6 @@ export function initSoundSystem() {
         config.soundEffects[key].load();
     }
 
-    // Carrega a preferência de som do usuário (ligado/desligado) do armazenamento local.
     const savedSoundPref = localStorage.getItem('soundEnabled');
     if (savedSoundPref !== null) {
         config.soundEnabled = savedSoundPref === 'true';
@@ -66,12 +69,13 @@ export function initSoundSystem() {
 }
 
 let audioUnlocked = false;
-/** Desbloqueia a reprodução de áudio após a primeira interação do usuário com a página. */
+/**
+ * Desbloqueia a reprodução de áudio após a primeira interação do utilizador com a página.
+ */
 export function unlockAudio() {
     if (audioUnlocked) return;
     audioUnlocked = true;
 
-    // Tenta tocar e pausar cada som para "prepará-los" no navegador.
     Object.values(config.soundEffects).forEach(sound => {
         sound.play().then(() => sound.pause()).catch(() => {});
     });
@@ -79,12 +83,18 @@ export function unlockAudio() {
 
 /**
  * Verifica se o jogador tem XP suficiente para subir de nível.
- * Esta é uma função pura: ela não modifica o estado global, apenas calcula e retorna as mudanças.
  * @param {number} level - O nível atual do jogador.
  * @param {number} xp - A quantidade de XP atual do jogador.
  * @param {number} enemiesCount - O número de inimigos na tela.
  * @param {boolean} bossFightActive - Se uma luta de chefe está ativa.
- * @returns {object} Um objeto contendo o novo estado e os eventos que ocorreram (level up, chefe).
+ * @returns {{
+ *  newLevel: number,
+ *  newXp: number,
+ *  skillPointsGained: number,
+ *  leveledUp: boolean,
+ *  bossToTrigger: number|null,
+ *  message: string|null
+ * }} Um objeto contendo o novo estado e os eventos que ocorreram.
  */
 export function checkLevelUp(level, xp, enemiesCount, bossFightActive) {
     const output = {
@@ -105,16 +115,13 @@ export function checkLevelUp(level, xp, enemiesCount, bossFightActive) {
         output.leveledUp = true;
         output.message = `Nível ${output.newLevel} alcançado! +1 Ponto de Habilidade`;
 
-        // Aciona uma luta de chefe a cada 10 níveis, incluindo o chefe final no nível 50.
         if (output.newLevel % 10 === 0) {
             output.bossToTrigger = output.newLevel;
         }
     } else if (level >= 50) {
-        // No nível máximo, a barra de XP permanece cheia.
         output.newXp = xpNeeded;
     }
 
-    // Lógica específica para o chefe final no nível 50.
     if (level === 50 && enemiesCount === 0 && !bossFightActive) {
         output.bossToTrigger = 50;
     }

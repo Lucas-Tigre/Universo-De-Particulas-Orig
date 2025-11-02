@@ -2,11 +2,43 @@
 
 Bem-vindo ao Universo de Partículas! Este é um jogo de sobrevivência espacial 2D onde você controla uma entidade cósmica com o poder de manipular partículas e inimigos. Sobreviva a ondas de adversários, suba de nível, desbloqueie habilidades e enfrente chefes poderosos para se tornar o mestre do universo.
 
+## 🚀 Começando
+
+Para executar o projeto localmente, siga estes passos:
+
+### Pré-requisitos
+
+- [Node.js](https://nodejs.org/) (versão 14 ou superior)
+- [npm](https://www.npmjs.com/) (normalmente vem com o Node.js)
+
+### Instalação
+
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/seu-usuario/universo-de-particulas.git
+   ```
+2. Navegue para o diretório do projeto:
+   ```bash
+   cd universo-de-particulas
+   ```
+3. Instale as dependências:
+   ```bash
+   npm install
+   ```
+
+### Executando o Jogo
+
+1. Inicie o servidor de desenvolvimento:
+   ```bash
+   npm start
+   ```
+2. Abra o seu navegador e vá para `http://localhost:8080`.
+
 ## 🎮 Como Jogar
 
 O controle do jogo é simples e intuitivo:
 
--   **Mover:** O seu personagem segue o cursor do mouse.
+-   **Mover:** Seu personagem segue o cursor do mouse.
 -   **Atração (Segure '1' ou clique esquerdo):** Atrai partículas e inimigos para perto de você. Inimigos presos no seu raio de atração sofrem dano contínuo.
 -   **Repulsão (Segure '2' ou clique direito):** Empurra partículas e inimigos para longe.
 -   **Vórtice (Segure '3'):** Cria um vórtice orbital que puxa inimigos e partículas em uma espiral, causando dano.
@@ -18,19 +50,12 @@ O objetivo é absorver partículas para ganhar XP, subir de nível e fortalecer 
 
 -   **Sistema de Níveis e XP:** Absorva partículas para ganhar experiência e subir de nível, até o nível máximo de 50.
 -   **Árvore de Habilidades:** Gaste pontos de habilidade ganhos a cada nível para desbloquear e melhorar status como raio de atração, dano do vórtice e vida máxima.
--   **Inimigos Diversificados:** Enfrente uma variedade de inimigos, cada um com comportamentos únicos:
-    -   **Rápidos:** Inimigos básicos que se movem rapidamente.
-    -   **Caçadores (Hunters):** Mantêm distância e disparam projéteis.
-    -   **Cósmicos:** Atravessam o mapa em linha reta como meteoros, imunes à sua atração.
-    -   **Atiradores (Shooters):** Unidades estáticas que disparam projéteis explosivos.
+-   **Inimigos Diversificados:** Enfrente uma variedade de inimigos, cada um com comportamentos únicos.
 -   **Batalhas de Chefe:** A cada 10 níveis, um Chefe poderoso aparece. No nível 50, prepare-se para o Chefe Final!
 -   **Power-Ups:** Colete partículas douradas especiais para ganhar um bônus temporário de dano e alcance.
--   **Customização:** Personalize sua experiência de jogo!
-    -   **Galáxias:** Desbloqueie e selecione diferentes fundos de tela.
-    -   **Skins:** Altere a aparência do seu personagem.
-    -   **Áudio e Imagens:** Substitua facilmente os arquivos de áudio e imagem para deixar o jogo com a sua cara.
+-   **Customização:** Personalize sua experiência de jogo com diferentes galáxias e skins.
 
-## 🛠️ Como o Código Funciona (Estrutura)
+## 🛠️ Estrutura do Projeto
 
 O código do jogo foi organizado de forma modular para ser fácil de entender e modificar. Todos os arquivos principais estão na pasta `js/`:
 
@@ -44,26 +69,21 @@ O código do jogo foi organizado de forma modular para ser fácil de entender e 
 -   `explosion.js`: Gerencia a lógica e a renderização das explosões.
 -   `audio.js`: Controla a reprodução de músicas de fundo.
 -   `utils.js`: Contém funções úteis, como o sistema de efeitos sonoros.
+-   `supabaseService.js`: Gerencia a comunicação com o Supabase para o leaderboard.
+-   `login.js`: Controla a lógica de autenticação na página de login.
 
 ## 🎨 Como Customizar
 
-Deixei o projeto preparado para que você possa customizar facilmente os sons e as imagens.
+O projeto está preparado para que você possa customizar facilmente os sons e as imagens.
 
 ### Áudio
 
 1.  Navegue até a pasta `assets/audio/`.
-2.  Você verá uma lista de arquivos `.mp3` (ex: `main_theme.mp3`, `hit.mp3`).
-3.  Para usar seus próprios sons, simplesmente **substitua** esses arquivos pelos seus, **mantendo os nomes dos arquivos exatamente os mesmos**.
+2.  Substitua os arquivos `.mp3` existentes pelos seus, mantendo os mesmos nomes.
 
-### Imagens de Fundo e de Chefes
+### Imagens
 
-1.  **Imagens de Fundo:**
-    -   Coloque seu arquivo de imagem na pasta `assets/images/`.
-    -   Abra o arquivo `js/config.js`.
-    -   Encontre a seção `galaxies` e, para a galáxia que deseja alterar, mude a linha `background` para: `background: "url('assets/images/SEU_ARQUIVO.jpg')"`
-
-2.  **Imagens dos Chefes:**
-    -   Coloque sua imagem na pasta `assets/images/`.
-    -   Abra o arquivo `js/config.js`.
-    -   Encontre a seção `enemySystem.types`, e localize `boss` e `finalBoss`.
-    -   Mude a propriedade `imageUrl` de `null` para o caminho da sua imagem: `imageUrl: 'assets/images/SEU_CHEFE.png'`
+1.  Coloque suas imagens na pasta `assets/images/`.
+2.  Abra `js/config.js`.
+3.  Na seção `galaxies`, altere a propriedade `background` para o caminho da sua imagem.
+4.  Na seção `enemySystem.types`, altere a propriedade `imageUrl` para os chefes.

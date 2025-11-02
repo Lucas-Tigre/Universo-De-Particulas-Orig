@@ -1,3 +1,8 @@
+/**
+ * @file Contém todas as funções que manipulam diretamente o DOM para atualizar a interface do utilizador (UI).
+ * @module js/ui
+ */
+
 import { getLeaderboard } from './supabaseService.js';
 
 /**
@@ -11,7 +16,7 @@ export async function displayLeaderboard() {
 
     try {
         const scores = await getLeaderboard();
-        leaderboardBody.innerHTML = ''; // Limpa o estado de carregamento
+        leaderboardBody.innerHTML = '';
 
         if (scores.length === 0) {
             leaderboardBody.innerHTML = '<tr><td colspan="3">Nenhuma pontuação registrada.</td></tr>';
@@ -45,10 +50,10 @@ function escapeHtml(text) {
 }
 
 /**
- * Este módulo contém todas as funções que manipulam diretamente o DOM para atualizar a interface do usuário (UI).
+ * Atualiza a barra de vida do jogador.
+ * @param {number} health - A vida atual do jogador.
+ * @param {number} maxHealth - A vida máxima do jogador.
  */
-
-/** Atualiza a barra de vida do jogador. */
 export function updateHealthBar(health, maxHealth) {
     const healthPercent = (health / maxHealth) * 100;
     const healthBar = document.getElementById('health-bar');
@@ -59,7 +64,6 @@ export function updateHealthBar(health, maxHealth) {
         healthPercent > 60 ? '#00F5A0' :
         healthPercent > 30 ? '#FFA500' : '#FF0000';
 
-    // Adiciona uma animação de pulsação quando a vida está baixa.
     if (healthPercent < 30) {
         healthBar.style.animation = 'pulse 1s infinite';
     } else {
@@ -67,7 +71,11 @@ export function updateHealthBar(health, maxHealth) {
     }
 }
 
-/** Atualiza a barra de experiência (XP) e o texto de nível. */
+/**
+ * Atualiza a barra de experiência (XP) e o texto de nível.
+ * @param {number} xp - A experiência atual do jogador.
+ * @param {number} level - O nível atual do jogador.
+ */
 export function updateXPBar(xp, level) {
     const xpNeeded = level * 100;
     const xpPercent = (xp / xpNeeded) * 100;
@@ -76,7 +84,10 @@ export function updateXPBar(xp, level) {
         `${xp}/${xpNeeded} XP (Nível ${level})`;
 }
 
-/** Atualiza o painel de estatísticas com os dados atuais do jogo. */
+/**
+ * Atualiza o painel de estatísticas com os dados atuais do jogo.
+ * @param {{level: number, xp: number, particlesAbsorbed: number, enemies: number, wave: number}} stats - As estatísticas a serem exibidas.
+ */
 export function updateStatsPanel(stats) {
     document.getElementById('stat-level').textContent = stats.level;
     document.getElementById('stat-xp').textContent = `${stats.xp}/${stats.level * 100}`;
@@ -85,10 +96,13 @@ export function updateStatsPanel(stats) {
     document.getElementById('stat-wave').textContent = stats.wave;
 }
 
-/** Renderiza a lista de missões ativas na tela. */
+/**
+ * Renderiza a lista de missões ativas na tela.
+ * @param {import('./config.js').Quest[]} activeQuests - A lista de missões ativas.
+ */
 export function updateQuestUI(activeQuests) {
     const container = document.getElementById('quests-container');
-    container.innerHTML = ''; // Limpa as missões antigas antes de renderizar as novas.
+    container.innerHTML = '';
 
     activeQuests.forEach(quest => {
         const progress = Math.min(100, (quest.current / quest.target) * 100);
@@ -105,17 +119,22 @@ export function updateQuestUI(activeQuests) {
     });
 }
 
-/** Exibe a tela de fim de jogo com as estatísticas finais. */
+/**
+ * Exibe a tela de fim de jogo com as estatísticas finais.
+ * @param {{level: number, wave: number, particles: number, enemiesDestroyed: number}} stats - As estatísticas finais a serem exibidas.
+ */
 export function showGameOver(stats) {
     document.getElementById('go-level').textContent = stats.level;
     document.getElementById('go-wave').textContent = stats.wave;
     document.getElementById('go-particles').textContent = stats.particlesAbsorbed;
     document.getElementById('go-enemies').textContent = stats.enemiesDestroyed;
-    createStars(); // Cria o efeito de estrelas no fundo.
+    createStars();
     document.getElementById('game-over-screen').style.display = 'flex';
 }
 
-/** Cria um fundo de estrelas animadas para a tela de fim de jogo. */
+/**
+ * Cria um fundo de estrelas animadas para a tela de fim de jogo.
+ */
 function createStars() {
     const container = document.getElementById('game-over-stars');
     container.innerHTML = '';
@@ -131,7 +150,10 @@ function createStars() {
     }
 }
 
-/** Destaca o modo de interação ativo no menu. */
+/**
+ * Destaca o modo de interação ativo no menu.
+ * @param {string} activeMode - O modo ativo a ser destacado.
+ */
 export function highlightActiveMode(activeMode) {
     document.querySelectorAll('[data-action="setMode"]').forEach(item => {
         if (item.getAttribute('data-mode') === activeMode) {
@@ -142,17 +164,28 @@ export function highlightActiveMode(activeMode) {
     });
 }
 
-/** Atualiza o indicador de som (ligado/desligado) na interface. */
+/**
+ * Atualiza o indicador de som (ligado/desligado) na interface.
+ * @param {boolean} soundEnabled - `true` se o som estiver ativado, `false` caso contrário.
+ */
 export function toggleSoundUI(soundEnabled) {
     document.getElementById('sound-status').textContent = soundEnabled ? 'ON' : 'OFF';
 }
 
-/** Atualiza o contador de FPS (Frames Por Segundo) na tela. */
+/**
+ * Atualiza o contador de FPS (Frames Por Segundo) na tela.
+ * @param {number} fps - O valor atual de FPS.
+ */
 export function updateFps(fps) {
     document.getElementById('fps-counter').textContent = `FPS: ${fps}`;
 }
 
-/** Exibe o mapa de galáxias e lida com a seleção. */
+/**
+ * Exibe o mapa de galáxias e lida com a seleção.
+ * @param {Object.<string, import('./config.js').Galaxy>} galaxies - A lista de todas as galáxias disponíveis.
+ * @param {string[]} unlockedGalaxies - A lista de galáxias desbloqueadas.
+ * @param {function(string): void} onSelect - A função de callback a ser chamada quando uma galáxia é selecionada.
+ */
 export function showGalaxyMap(galaxies, unlockedGalaxies, onSelect) {
     const map = document.getElementById('galaxy-map');
     map.style.display = 'block';
@@ -171,7 +204,6 @@ export function showGalaxyMap(galaxies, unlockedGalaxies, onSelect) {
         `;
 
         if (isUnlocked) {
-            // Clona o nó para remover event listeners antigos antes de adicionar um novo.
             const newGalaxyEl = galaxyEl.cloneNode(true);
             galaxyEl.parentNode?.replaceChild(newGalaxyEl, galaxyEl);
             newGalaxyEl.addEventListener('click', () => {
@@ -183,7 +215,12 @@ export function showGalaxyMap(galaxies, unlockedGalaxies, onSelect) {
     }
 }
 
-/** Exibe a árvore de habilidades e lida com os upgrades. */
+/**
+ * Exibe a árvore de habilidades e lida com os upgrades.
+ * @param {Object.<string, import('./config.js').Skill>} skills - A lista de todas as habilidades.
+ * @param {number} skillPoints - O número de pontos de habilidade que o jogador possui.
+ * @param {function(string): void} onUpgrade - A função de callback a ser chamada quando uma habilidade é atualizada.
+ */
 export function showSkillTree(skills, skillPoints, onUpgrade) {
     const tree = document.getElementById('skill-tree');
     tree.style.display = 'block';
@@ -203,7 +240,6 @@ export function showSkillTree(skills, skillPoints, onUpgrade) {
         skillsList.appendChild(skillEl);
     }
 
-    // Adiciona os event listeners aos botões de upgrade.
     document.querySelectorAll('.upgrade-btn').forEach(btn => {
         const newBtn = btn.cloneNode(true);
         btn.parentNode.replaceChild(newBtn, btn);
@@ -214,7 +250,12 @@ export function showSkillTree(skills, skillPoints, onUpgrade) {
     });
 }
 
-/** Exibe o modal de skins e lida com a seleção. */
+/**
+ * Exibe o modal de skins e lida com a seleção.
+ * @param {import('./config.js').Skin[]} skins - A lista de todas as skins disponíveis.
+ * @param {string} currentSkin - O ID da skin atual.
+ * @param {function(string): void} onSelect - A função de callback a ser chamada quando uma skin é selecionada.
+ */
 export function showSkinsModal(skins, currentSkin, onSelect) {
     const modal = document.getElementById('skins-modal');
     modal.style.display = 'flex';
@@ -248,20 +289,17 @@ export function updateBigBangChargeBar(chargePercent) {
     const container = document.getElementById('bigbang-charge-container');
     if (!container) return;
 
-    // Controla a visibilidade usando a classe CSS .visible
     if (chargePercent > 0) {
         container.classList.add('visible');
     } else {
         container.classList.remove('visible');
     }
 
-    // A barra de progresso em si.
     const progressBar = document.getElementById('bigbang-charge-progress');
     if (progressBar) {
         progressBar.style.width = `${chargePercent}%`;
     }
 
-    // Quando a barra está cheia, adiciona um efeito para indicar que está pronto.
     if (chargePercent >= 100) {
         container.classList.add('bigbang-ready');
     } else {
