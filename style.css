@@ -1444,7 +1444,6 @@ body {
     box-shadow: 0 0 20px rgba(74, 0, 224, 0.4);
     border: 1px solid rgba(74, 0, 224, 0.2);
     backdrop-filter: blur(4px);
-    display: none; /* Adicionado para ocultar por padrão */
 }
 
 .leaderboard-container h2 {

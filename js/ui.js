@@ -113,13 +113,6 @@ export function showGameOver(stats) {
     document.getElementById('go-enemies').textContent = stats.enemiesDestroyed;
     createStars(); // Cria o efeito de estrelas no fundo.
     document.getElementById('game-over-screen').style.display = 'flex';
-
-    // Exibe e atualiza o placar de líderes
-    const leaderboardContainer = document.querySelector('.leaderboard-container');
-    if (leaderboardContainer) {
-        leaderboardContainer.style.display = 'block';
-    }
-    displayLeaderboard();
 }
 
 /** Cria um fundo de estrelas animadas para a tela de fim de jogo. */

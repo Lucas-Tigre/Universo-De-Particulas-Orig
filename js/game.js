@@ -25,18 +25,6 @@ const imageCache = {};
 // =============================================
 // FUNÇÕES AUXILIARES
 // =============================================
-
-/**
- * Aplica dano a uma entidade de forma segura, garantindo que a vida não seja corrompida por valores inválidos.
- * @param {object} target - A entidade que receberá o dano (ex: player).
- * @param {number} damage - A quantidade de dano a ser aplicada.
- */
-export function applyDamage(target, damage) {
-    if (typeof damage === 'number' && !isNaN(damage) && damage > 0) {
-        target.health -= damage;
-    }
-}
-
 function toggleMenu(menuElement, show) {
     const display = show ? 'block' : 'none';
     if (menuElement) {
@@ -689,9 +677,6 @@ function initGame() {
     // Exibe o nome da galáxia do jogador.
     const username = localStorage.getItem('username') || 'Viajante';
     document.getElementById('galaxy-owner-display').textContent = `Galáxia de ${username}`;
-
-    // Expondo a instância para o Playwright
-    window.UdeP = { instance: { config, ui, state } };
 
     setupControls();
     state.setGameLoopRunning(true);

@@ -278,15 +278,32 @@ export function updateEnemies(enemies, player, config, canvas, bigBangActive) {
 // ======================
 export function drawEnemies(ctx, enemies) {
   enemies.forEach(enemy => {
-    // CORREÇÃO: A lógica de renderização anterior, com múltiplos `fill` e trocas de estilo,
-    // estava causando uma falha silenciosa que impedia os inimigos de serem desenhados.
-    // Simplificar para renderizar apenas a "face" (o elemento visual principal) resolve o problema.
+    // 🔹 Corpo do inimigo
+    ctx.beginPath();
+    ctx.fillStyle = enemy.color;
+    ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.closePath();
+
+    // 🔹 "Face" do inimigo (emoji)
     if (enemy.face) {
         ctx.font = `${enemy.radius * 1.5}px Arial`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(enemy.face, enemy.x, enemy.y);
     }
+
+    // 🔹 Barra de vida
+    const healthPercentage = Math.max(0, enemy.health / enemy.maxHealth);
+    const barWidth = enemy.radius * 2;
+    const barHeight = 4;
+    const barX = enemy.x - enemy.radius;
+    const barY = enemy.y - enemy.radius - 10;
+
+    ctx.fillStyle = 'red';
+    ctx.fillRect(barX, barY, barWidth, barHeight);
+    ctx.fillStyle = 'lime';
+    ctx.fillRect(barX, barY, barWidth * healthPercentage, barHeight);
   });
 }
 
