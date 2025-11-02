@@ -174,7 +174,8 @@ export function updateEnemies(enemies, player, config, canvas, bigBangActive) {
                 y: enemy.y,
                 radius: enemy.radius * 2,
                 color: enemy.color,
-                duration: 30
+                duration: 30,
+                damage: enemy.damage
             });
 
             xpGained += type.xpValue || 10;
