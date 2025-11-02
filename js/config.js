@@ -1,3 +1,168 @@
+/**
+ * @file Ficheiro de configuração central para todos os parâmetros de jogabilidade.
+ * @module js/config
+ */
+
+/**
+ * @typedef {Object} ParticleColorRange
+ * @property {number[]} h - Variação de Matiz (Hue).
+ * @property {number[]} s - Variação de Saturação (Saturation).
+ * @property {number[]} l - Variação de Luminosidade (Lightness).
+ */
+
+/**
+ * @typedef {Object} Galaxy
+ * @property {string} name - O nome da galáxia.
+ * @property {string} description - A descrição da galáxia.
+ * @property {string} unlockCondition - A condição para desbloquear a galáxia.
+ * @property {ParticleColorRange} particleColorRange - A gama de cores das partículas.
+ * @property {string} background - A imagem de fundo da galáxia.
+ */
+
+/**
+ * @typedef {Object} Player
+ * @property {number} id - O identificador do jogador.
+ * @property {number|null} x - A posição X do jogador.
+ * @property {number|null} y - A posição Y do jogador.
+ * @property {string} mode - O modo de interação do jogador ('attract' ou 'repel').
+ * @property {string} color - A cor do jogador.
+ * @property {number} radius - O raio de interação do jogador.
+ * @property {number} size - O tamanho do jogador.
+ * @property {string} face - O emoji que representa o jogador.
+ * @property {number} faceSize - O tamanho do emoji.
+ * @property {number} health - A vida atual do jogador.
+ * @property {number} maxHealth - A vida máxima do jogador.
+ * @property {number} collisionDamage - O dano que o jogador causa ao colidir com inimigos.
+ * @property {number} attractionDamage - O dano por segundo do vórtice de atração.
+ * @property {boolean} isPoweredUp - Se o jogador está com power-up.
+ * @property {number} powerUpTimer - O temporizador do power-up.
+ * @property {number} invincibilityCooldown - A duração da invencibilidade em frames após sofrer dano.
+ * @property {number} invincibleTimer - O temporizador atual da invencibilidade.
+ */
+
+/**
+ * @typedef {Object} EnemyType
+ * @property {string} name - O nome do tipo de inimigo.
+ * @property {number} chance - A probabilidade de aparecimento deste tipo de inimigo.
+ * @property {number} speed - A velocidade do inimigo.
+ * @property {string} behavior - O comportamento do inimigo.
+ * @property {string[]} face - Os emojis que representam o inimigo.
+ * @property {string} color - A cor do inimigo.
+ * @property {number} [healthMultiplier] - O multiplicador de vida do inimigo.
+ * @property {number} [huntRadius] - O raio de perseguição do inimigo.
+ * @property {number} [preferredDistance] - A distância preferida do inimigo em relação ao jogador.
+ * @property {number} [shootCooldown] - O tempo de recarga do tiro do inimigo.
+ * @property {string} [projectileType] - O tipo de projétil que o inimigo dispara.
+ * @property {number} [damage] - O dano do inimigo.
+ * @property {boolean} [ignoresAttraction] - Se o inimigo ignora a atração do jogador.
+ * @property {boolean} [ignoresCollision] - Se o inimigo ignora a colisão com o jogador.
+ * @property {string|null} [imageUrl] - A URL da imagem do inimigo.
+ * @property {number} [size] - O tamanho do inimigo.
+ * @property {number} [health] - A vida do inimigo.
+ */
+
+/**
+ * @typedef {Object} Skill
+ * @property {string} name - O nome da habilidade.
+ * @property {number} cost - O custo da habilidade.
+ * @property {number} maxLevel - O nível máximo da habilidade.
+ * @property {string} effect - O efeito da habilidade.
+ * @property {number} currentLevel - O nível atual da habilidade.
+ * @property {string[]} [requires] - Os pré-requisitos para desbloquear a habilidade.
+ */
+
+/**
+ * @typedef {Object} Quest
+ * @property {string} id - O identificador da missão.
+ * @property {number} target - O objetivo da missão.
+ * @property {number} current - O progresso atual da missão.
+ * @property {number} reward - A recompensa da missão.
+ * @property {string} title - O título da missão.
+ */
+
+/**
+ * @typedef {Object} StoryScene
+ * @property {string} npc - O NPC da cena.
+ * @property {string} text - O texto da cena.
+ * @property {string} background - O fundo da cena.
+ * @property {string} effect - O efeito da cena.
+ * @property {boolean} [shake] - Se a cena deve tremer.
+ */
+
+/**
+ * @typedef {Object} Skin
+ * @property {string} id - O identificador da skin.
+ * @property {string} name - O nome da skin.
+ * @property {string} emoji - O emoji da skin.
+ * @property {string} type - O tipo de skin ('normal' ou 'premium').
+ * @property {boolean} unlocked - Se a skin está desbloqueada.
+ * @property {string} [unlockCondition] - A condição para desbloquear a skin.
+ */
+
+/**
+ * Objeto de configuração principal que contém todos os parâmetros do jogo.
+ * @type {Object}
+ * @property {number} particleCount - Número total de partículas no mapa.
+ * @property {number} mouseRadius - Raio de interação do mouse (não utilizado atualmente).
+ * @property {Object} particleRespawn - Configurações de respawn de partículas.
+ * @property {number} particleRespawn.minParticles - Se o número de partículas cair abaixo disso, novas partículas são geradas.
+ * @property {number} particleRespawn.respawnAmount - Quantidade de partículas a serem geradas.
+ * @property {number} particleRespawn.checkInterval - Intervalo (em frames) para verificar a necessidade de gerar novas partículas.
+ * @property {Object} healingParticle - Configurações de partículas de cura.
+ * @property {number} healingParticle.dropChance - Probabilidade de um inimigo dropar uma partícula de cura.
+ * @property {number} healingParticle.amount - Quantidade de vida que a partícula restaura.
+ * @property {Object} galaxies - Configurações de galáxias.
+ * @property {string[]} galaxies.unlocked - As galáxias desbloqueadas.
+ * @property {string} galaxies.current - A galáxia atual.
+ * @property {Object.<string, Galaxy>} galaxies.list - A lista de galáxias.
+ * @property {Player[]} players - A lista de jogadores.
+ * @property {Object} enemySystem - Configurações do sistema de inimigos.
+ * @property {number} enemySystem.spawnMargin - Distância da borda da tela para o nascimento de inimigos.
+ * @property {number} enemySystem.baseHealth - Vida base dos inimigos.
+ * @property {number} enemySystem.baseDamage - Dano base dos inimigos.
+ * @property {number} enemySystem.damageIncreasePerLevel - Dano adicional por onda.
+ * @property {number} enemySystem.baseSize - Tamanho base dos inimigos.
+ * @property {number} enemySystem.eliteSizeMultiplier - Multiplicador de tamanho para inimigos de elite.
+ * @property {number} enemySystem.healthIncreasePerLevel - Aumento de vida por nível.
+ * @property {number} enemySystem.collisionCooldown - Frames de invencibilidade do inimigo após colidir com o jogador.
+ * @property {Object.<string, EnemyType>} enemySystem.types - Os tipos de inimigos.
+ * @property {Object} skills - A árvore de habilidades.
+ * @property {Object.<string, Skill>} skills.tree - A lista de habilidades.
+ * @property {number} xp - A experiência atual do jogador.
+ * @property {number} globalXpMultiplier - Multiplicador global para ganho de XP.
+ * @property {number} level - O nível atual do jogador.
+ * @property {number} skillPoints - Os pontos de habilidade atuais do jogador.
+ * @property {boolean} soundEnabled - Se o som está ativado.
+ * @property {boolean} gamePaused - Se o jogo está pausado.
+ * @property {boolean} bossFightActive - Se uma luta contra um chefe está ativa.
+ * @property {number} particlesAbsorbed - O número de partículas absorvidas.
+ * @property {number} enemiesDestroyed - O número de inimigos destruídos.
+ * @property {number} gameTime - O tempo de jogo.
+ * @property {Object} wave - Configurações de onda.
+ * @property {number} wave.number - O número da onda atual.
+ * @property {number} wave.enemiesToSpawn - O número de inimigos a serem gerados.
+ * @property {number} wave.spawned - O número de inimigos gerados.
+ * @property {number} wave.timer - O temporizador da onda.
+ * @property {number} bigBangCharge - A carga atual do Big Bang.
+ * @property {number} bigBangChargeRate - Pontos de carga por inimigo derrotado.
+ * @property {boolean} isMobile - Se o dispositivo é um telemóvel.
+ * @property {Object} quests - As missões do jogo.
+ * @property {Quest[]} quests.active - As missões ativas.
+ * @property {string[]} quests.completed - As missões concluídas.
+ * @property {Object} soundEffects - Cache para efeitos sonoros.
+ * @property {Object} story - As configurações da história.
+ * @property {boolean} story.enabled - Se a história está ativada.
+ * @property {number} story.currentScene - A cena atual da história.
+ * @property {StoryScene[]} story.scenes - As cenas da história.
+ * @property {Object} npc - As configurações do NPC.
+ * @property {boolean} npc.active - Se o NPC está ativo.
+ * @property {number} npc.currentDialog - O diálogo atual do NPC.
+ * @property {string[]} npc.dialogs - Os diálogos do NPC.
+ * @property {string} npc.bossDialog - O diálogo do chefe do NPC.
+ * @property {Object} skins - As skins do jogo.
+ * @property {Skin[]} skins.available - As skins disponíveis.
+ * @property {string} skins.current - A skin atual.
+ */
 export const config = {
     // =============================================
     // CONFIGURAÇÕES GERAIS DE JOGABILIDADE
@@ -91,7 +256,7 @@ export const config = {
                 name: "Rápido",
                 chance: 0.55,
                 speed: 3.5,
-                behavior: 'hunt', 
+                behavior: 'hunt',
                 huntRadius: 500,   // Adicionado raio de perseguição
                 face: ["😠", "😡", "😤"],
                 color: '#FFDD00',
@@ -122,7 +287,7 @@ export const config = {
             },
             shooter: {
                 name: "Atirador",
-                chance: 0.05,
+                chance:.05,
                 speed: 1.5,
                 behavior: 'shooter',
                 face: ["🛰️", "📡"],

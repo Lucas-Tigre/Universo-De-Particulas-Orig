@@ -1,9 +1,17 @@
+/**
+ * @file Gestor de autenticação para a página de login, incluindo registo, login, modo de convidado e redefinição de palavra-passe.
+ * @module js/login
+ */
+
 // Versão Final e Corrigida do js/login.js
 
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from './supabaseConfig.js';
 
-// Tenta inicializar o Supabase, mas não trava se falhar
+/**
+ * A instância do cliente Supabase. Nula se a configuração não estiver disponível.
+ * @type {import("@supabase/supabase-js").SupabaseClient|null}
+ */
 let supabase = null;
 if (SUPABASE_URL && !SUPABASE_URL.includes("SUA_URL") && SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.includes("SUA_CHAVE")) {
   try {
@@ -32,6 +40,11 @@ const resetPasswordModal = document.getElementById('resetPasswordModal');
 const closeModal = document.getElementById('closeModal');
 const resetPasswordForm = document.getElementById('resetPasswordForm');
 
+/**
+ * Exibe uma mensagem ao utilizador.
+ * @param {string} text - O texto da mensagem a ser exibida.
+ * @param {string} [type="success"] - O tipo de mensagem ("success" ou "error").
+ */
 const showMsg = (text, type = "success") => {
   if (!authMsg) return;
   authMsg.textContent = text;
@@ -94,7 +107,6 @@ if (supabase) {
     const { data, error } = await supabase.auth.signInWithPassword({ email: userOrEmail, password: pass });
     if (error) return showMsg("Erro: " + error.message, "error");
 
-    // Armazena o nome do usuário e redireciona
     if (data.user) {
         localStorage.setItem('username', data.user.user_metadata?.full_name || data.user.email);
         showMsg("Login bem-sucedido! Redirecionando...", "success");
@@ -104,7 +116,6 @@ if (supabase) {
 
   supabase.auth.onAuthStateChange((_event, session) => {
     if (session?.user) {
-        // Se já está logado, redireciona direto
         localStorage.setItem('username', session.user.user_metadata?.full_name || session.user.email);
         window.location.href = 'game.html';
     }

@@ -1,3 +1,8 @@
+/**
+ * @file Módulo para a gestão de inimigos, incluindo a sua criação, atualização e renderização.
+ * @module js/enemy
+ */
+
 import { createProjectile } from './projectile.js';
 // ======================
 // SISTEMA DE INIMIGOS v2.0
@@ -8,6 +13,12 @@ const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 800;
 const screenHeight = typeof window !== 'undefined' ? window.innerHeight : 600;
 
 // 🔹 Função utilitária para gerar números aleatórios de forma simples
+/**
+ * Gera um número aleatório dentro de um intervalo.
+ * @param {number} [min=0] - O valor mínimo.
+ * @param {number} [max=1] - O valor máximo.
+ * @returns {number} O número aleatório gerado.
+ */
 function rand(min = 0, max = 1) {
   return Math.random() * (max - min) + min;
 }
@@ -15,6 +26,13 @@ function rand(min = 0, max = 1) {
 // ======================
 // GERAR INIMIGOS
 // ======================
+/**
+ * Gera um novo inimigo com base num tipo específico.
+ * @param {string} typeKey - A chave do tipo de inimigo a ser gerado (e.g., 'fast', 'hunter').
+ * @param {import('./config.js').config} config - O objeto de configuração do jogo.
+ * @param {import('./config.js').Player} player - O objeto do jogador.
+ * @returns {Object|null} O objeto do inimigo gerado ou nulo se o tipo não for válido.
+ */
 export function spawnEnemy(typeKey, config, player) {
   const type = config.enemySystem.types[typeKey];
   if (!type) return null; // segurança extra
@@ -111,6 +129,25 @@ export function spawnEnemy(typeKey, config, player) {
 // ======================
 // ATUALIZAÇÃO DOS INIMIGOS
 // ======================
+/**
+ * Atualiza o estado de todos os inimigos, incluindo movimento, comportamento e colisões.
+ * @param {Object[]} enemies - A lista de inimigos a ser atualizada.
+ * @param {import('./config.js').Player} player - O objeto do jogador.
+ * @param {import('./config.js').config} config - O objeto de configuração do jogo.
+ * @param {HTMLCanvasElement} canvas - O elemento canvas para verificação de limites.
+ * @param {boolean} bigBangActive - Se o Big Bang está ativo.
+ * @returns {{
+ *   updatedEnemies: Object[],
+ *   newProjectiles: Object[],
+ *   newExplosions: Object[],
+ *   damageToPlayer: number,
+ *   xpGained: number,
+ *   bigBangChargeGained: number,
+ *   enemiesDefeated: number,
+ *   healingParticles: Object[],
+ *   newEnemies: Object[]
+ * }} Um objeto com os resultados da atualização.
+ */
 export function updateEnemies(enemies, player, config, canvas, bigBangActive) {
     const newProjectiles = [];
     const newExplosions = [];
@@ -276,6 +313,11 @@ export function updateEnemies(enemies, player, config, canvas, bigBangActive) {
 // ======================
 // DESENHAR INIMIGOS NA TELA
 // ======================
+/**
+ * Desenha todos os inimigos no canvas.
+ * @param {CanvasRenderingContext2D} ctx - O contexto de renderização do canvas.
+ * @param {Object[]} enemies - A lista de inimigos a serem desenhados.
+ */
 export function drawEnemies(ctx, enemies) {
   enemies.forEach(enemy => {
     // 🔹 Corpo do inimigo
@@ -310,6 +352,12 @@ export function drawEnemies(ctx, enemies) {
 // ======================
 // GERADOR DE INIMIGOS ALEATÓRIOS
 // ======================
+/**
+ * Gera um inimigo aleatório com base nas probabilidades definidas na configuração.
+ * @param {import('./config.js').config} config - O objeto de configuração do jogo.
+ * @param {import('./config.js').Player} player - O objeto do jogador.
+ * @returns {Object|null} O objeto do inimigo gerado ou nulo se ocorrer um erro.
+ */
 export function spawnRandomEnemy(config, player) {
   const enemyTypes = Object.keys(config.enemySystem.types);
   const totalChance = enemyTypes.reduce(

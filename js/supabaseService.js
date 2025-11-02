@@ -1,7 +1,15 @@
+/**
+ * @file Módulo de serviço para interações com o Supabase, como o envio de pontuações e a obtenção do leaderboard.
+ * @module js/supabaseService
+ */
+
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from './supabaseConfig.js';
 
-// Cria o cliente Supabase apenas se as credenciais estiverem disponíveis e não forem placeholders.
+/**
+ * A instância do cliente Supabase, inicializada apenas se as credenciais estiverem disponíveis.
+ * @type {import('@supabase/supabase-js').SupabaseClient|null}
+ */
 let supabase = null;
 if (SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_URL !== "SUA_URL_DO_SUPABASE_AQUI" && SUPABASE_ANON_KEY !== "SUA_CHAVE_ANON_AQUI") {
     try {
@@ -20,10 +28,10 @@ export { supabase };
  * Envia a pontuação de um jogador para a tabela 'leaderboard'.
  * @param {string} username - O nome do jogador.
  * @param {number} score - A pontuação do jogador (partículas absorvidas).
- * @returns {Promise<object|null>} O resultado da inserção ou null em caso de erro.
+ * @returns {Promise<object|null>} O resultado da inserção ou nulo em caso de erro.
  */
 export async function submitScore(username, score) {
-    if (!supabase) return null; // Não faz nada se o Supabase não foi inicializado
+    if (!supabase) return null;
 
     if (!username || typeof score !== 'number') {
         console.error("Nome de usuário ou pontuação inválida.");
@@ -50,25 +58,23 @@ export async function submitScore(username, score) {
 
 /**
  * Busca os 10 melhores jogadores da tabela 'leaderboard', garantindo que cada jogador apareça apenas uma vez com sua maior pontuação.
- * @returns {Promise<Array<object>>} Uma lista com os melhores jogadores ou uma lista vazia em caso de erro.
+ * @returns {Promise<Array<{username: string, score: number}>>} Uma lista com os melhores jogadores ou uma lista vazia em caso de erro.
  */
 export async function getLeaderboard() {
     if (!supabase) return [];
 
     try {
-        // 1. Busca um número maior de pontuações para ter uma boa base de dados.
         const { data, error } = await supabase
             .from('leaderboard')
             .select('username, score')
             .order('score', { ascending: false })
-            .limit(100); // Aumenta o limite para capturar mais entradas
+            .limit(100);
 
         if (error) {
             console.error('Erro ao buscar placar:', error);
             return [];
         }
 
-        // 2. Processa os dados para encontrar a pontuação mais alta de cada jogador.
         const highestScores = new Map();
         for (const entry of data) {
             if (!highestScores.has(entry.username) || entry.score > highestScores.get(entry.username)) {
@@ -76,13 +82,10 @@ export async function getLeaderboard() {
             }
         }
 
-        // 3. Converte o mapa de volta para um array.
         const uniqueScores = Array.from(highestScores, ([username, score]) => ({ username, score }));
 
-        // 4. Ordena o array pela pontuação.
         uniqueScores.sort((a, b) => b.score - a.score);
 
-        // 5. Retorna os 10 melhores.
         return uniqueScores.slice(0, 10);
 
     } catch (error) {

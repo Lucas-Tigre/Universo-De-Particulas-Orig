@@ -1,6 +1,11 @@
-// =============================================
-// IMPORTAÇÕES DOS MÓDULOS
-// =============================================
+/**
+ * @file O orquestrador principal do jogo, responsável pelo loop, estado, renderização e interações do utilizador.
+ * @module js/game
+ */
+
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// > IMPORTAÇÕES DOS MÓDULOS
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 import { config } from './config.js';
 import * as state from './state.js';
 import * as ui from './ui.js';
@@ -12,32 +17,47 @@ import * as explosion from './explosion.js';
 import { checkLevelUp as checkLevelUpLogic, showUnlockMessage, playSound, initSoundSystem, unlockAudio } from './utils.js';
 import { playMusic, stopMusic, preloadMusic } from './audio.js';
 
-// Armazena uma cópia da configuração inicial de missões para garantir que o reset seja consistente.
+/**
+ * Uma cópia profunda da configuração inicial das missões para garantir um reset consistente.
+ * @type {import('./config.js').Quest[]}
+ */
 export const initialQuests = JSON.parse(JSON.stringify(config.quests));
 
-// =============================================
-// ELEMENTOS DO DOM E CACHE DE ASSETS
-// =============================================
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// > ELEMENTOS DO DOM E CACHE DE ASSETS
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+/**
+ * Cache para armazenar imagens pré-carregadas e evitar pop-in.
+ * @type {Object.<string, HTMLImageElement>}
+ */
 const imageCache = {};
 
-// =============================================
-// FUNÇÕES AUXILIARES
-// =============================================
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// > FUNÇÕES AUXILIARES
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+/**
+ * Mostra ou esconde um elemento de menu e pausa o jogo.
+ * @param {HTMLElement} menuElement - O elemento do menu a ser mostrado/escondido.
+ * @param {boolean} show - `true` para mostrar o menu, `false` para esconder.
+ */
 function toggleMenu(menuElement, show) {
     const display = show ? 'block' : 'none';
     if (menuElement) {
         menuElement.style.display = display;
     }
-    config.gamePaused = show; // Pausa o jogo sempre que um menu é aberto.
+    config.gamePaused = show;
 }
 
-// =============================================
-// LÓGICA PRINCIPAL DO JOGO
-// =============================================
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// > LÓGICA PRINCIPAL DO JOGO
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-/** Ativa uma batalha de chefe, limpando inimigos normais e iniciando a música do chefe. */
+/**
+ * Ativa uma batalha de chefe, limpando inimigos normais e iniciando a música do chefe.
+ * @param {number} level - O nível do jogador, para determinar qual chefe gerar.
+ */
 function triggerBossFight(level) {
     state.setEnemies([]);
     config.bossFightActive = true;
@@ -51,7 +71,9 @@ function triggerBossFight(level) {
     }
 }
 
-/** Verifica se o jogador tem XP suficiente para subir de nível e lida com a lógica de progressão. */
+/**
+ * Verifica se o jogador tem XP suficiente para subir de nível e lida com a lógica de progressão.
+ */
 function checkLevelUp() {
     const levelUpResult = checkLevelUpLogic(
         config.level,
@@ -74,7 +96,11 @@ function checkLevelUp() {
     }
 }
 
-/** Atualiza o progresso de uma missão ativa com base em uma ação do jogador. */
+/**
+ * Atualiza o progresso de uma missão ativa com base numa ação do jogador.
+ * @param {string} questId - O ID da missão a ser atualizada.
+ * @param {number} [amount=1] - A quantidade a ser adicionada ao progresso da missão.
+ */
 function updateQuest(questId, amount = 1) {
     const quest = config.quests.active.find(q => q.id === questId);
     if (quest) {
@@ -90,23 +116,22 @@ function updateQuest(questId, amount = 1) {
     }
 }
 
-/** Gerencia as ondas de inimigos, iniciando novas ondas quando a anterior é derrotada. */
+/**
+ * Ativa a habilidade Big Bang, causando dano massivo a todos os inimigos.
+ */
 export function activateBigBang() {
     if (config.bigBangCharge < 100) return;
 
-    // Lógica de dano
     const enemies = state.enemies;
     const remainingEnemies = enemies.filter(enemy => {
         if (enemy.type === 'boss' || enemy.type === 'finalBoss') {
-            enemy.health -= enemy.maxHealth * 0.3; // 30% de dano em chefes
-            return enemy.health > 0; // Mantém o chefe se ele sobreviver
+            enemy.health -= enemy.maxHealth * 0.3;
+            return enemy.health > 0;
         }
-        return false; // Remove inimigos normais
+        return false;
     });
     state.setEnemies(remainingEnemies);
 
-
-    // Efeitos visuais (simulados via DOM)
     document.getElementById('supernova').style.animation = 'supernova-explosion 1s forwards';
     document.getElementById('shockwave').style.animation = 'shockwave 1.5s forwards';
     setTimeout(() => {
@@ -114,11 +139,13 @@ export function activateBigBang() {
         document.getElementById('shockwave').style.animation = '';
     }, 1500);
 
-    // Reseta a carga
     config.bigBangCharge = 0;
-    playSound('explosion'); // Reutiliza um som existente
+    playSound('explosion');
 }
 
+/**
+ * Gerencia as ondas de inimigos, iniciando novas ondas e gerando inimigos.
+ */
 function updateWave() {
     if (config.bossFightActive) {
         if (state.enemies.length === 0) {
@@ -131,19 +158,14 @@ function updateWave() {
 
     config.wave.timer++;
 
-    // Condição para iniciar uma nova onda
     if (state.enemies.length === 0 && config.wave.spawned >= config.wave.enemiesToSpawn) {
-        console.log("Iniciando nova onda!");
         config.wave.number++;
         config.wave.enemiesToSpawn = 5 + Math.floor(config.wave.number * 1.5);
         config.wave.spawned = 0;
         config.wave.timer = 0;
         showUnlockMessage(`Onda ${config.wave.number} começando!`);
         updateQuest('wave5', 1);
-    }
-    // Condição para gerar um novo inimigo na onda atual
-    else if (config.wave.spawned < config.wave.enemiesToSpawn && config.wave.timer > 90) {
-        console.log("Gerando novo inimigo.");
+    } else if (config.wave.spawned < config.wave.enemiesToSpawn && config.wave.timer > 90) {
         const newEnemy = enemy.spawnRandomEnemy(config, config.players[0], canvas);
         if (newEnemy) {
             state.setEnemies([...state.enemies, newEnemy]);
@@ -153,7 +175,9 @@ function updateWave() {
     }
 }
 
-/** Atualiza o painel de estatísticas na interface do usuário. */
+/**
+ * Atualiza o painel de estatísticas na interface do utilizador.
+ */
 function updateStats() {
     const stats = {
         level: config.level,
@@ -165,7 +189,9 @@ function updateStats() {
     ui.updateStatsPanel(stats);
 }
 
-/** Gerencia o tempo de duração do power-up do jogador. */
+/**
+ * Gerencia o tempo de duração do power-up do jogador.
+ */
 function handlePowerUpTimer() {
     const player = config.players[0];
     if (player.isPoweredUp && player.powerUpTimer > 0) {
@@ -176,20 +202,19 @@ function handlePowerUpTimer() {
     }
 }
 
-/** Gera um lote inicial de partículas de forma assíncrona para não travar o jogo. */
-/** Gera um lote inicial de partículas de forma assíncrona para não travar o jogo. */
+/**
+ * Gera um lote inicial de partículas de forma assíncrona para não travar o jogo.
+ */
 function spawnBatch() {
     const player = config.players[0];
     const particlesToSpawn = config.particleCount;
     const batchSize = 25;
-    // CRÍTICO: Usa o operador de propagação (...) para criar uma CÓPIA do array.
-    // Isso evita que mutações em outras partes do código afetem a geração de partículas.
     const currentParticles = [...state.particles];
     for (let i = 0; i < batchSize; i++) {
         if (currentParticles.length < particlesToSpawn) {
             currentParticles.push(particle.getParticle(player));
         } else {
-            return; // Atingiu o limite, para a geração.
+            return;
         }
     }
     state.setParticles(currentParticles);
@@ -198,12 +223,13 @@ function spawnBatch() {
     }
 }
 
-/** Reinicia o jogo para o estado inicial, restaurando o progresso e as habilidades. */
+/**
+ * Reinicia o jogo para o estado inicial, restaurando o progresso e as habilidades.
+ */
 export function restartGame() {
     document.getElementById('game-over-screen').style.display = 'none';
     const player = config.players[0];
 
-    // Restaura o estado do jogador para os valores base.
     player.mode = 'attract';
     player.health = player.baseMaxHealth;
     player.isPoweredUp = false;
@@ -213,7 +239,6 @@ export function restartGame() {
     player.maxHealth = player.baseMaxHealth;
     config.xpMultiplier = config.baseXpMultiplier;
 
-    // Restaura o estado do jogo.
     config.gamePaused = false;
     config.bossFightActive = false;
     state.setParticles([]);
@@ -222,12 +247,10 @@ export function restartGame() {
     state.setProjectiles([]);
     state.setExplosions([]);
 
-    // Restaura as habilidades.
     for (const key in config.skills.tree) {
         config.skills.tree[key].currentLevel = 0;
     }
 
-    // Restaura o progresso de nível, onda e missões.
     Object.assign(config, {
         wave: { number: 1, enemiesToSpawn: 5, spawned: 0, timer: 0 },
         xp: 0,
@@ -238,7 +261,6 @@ export function restartGame() {
     });
     config.quests = JSON.parse(JSON.stringify(initialQuests));
 
-    // Reinicia a música e o loop do jogo.
     playMusic('mainTheme');
     if (!state.gameLoopRunning) {
         state.setGameLoopRunning(true);
@@ -246,7 +268,10 @@ export function restartGame() {
     }
 }
 
-/** Aplica o upgrade de uma habilidade se o jogador tiver pontos suficientes. */
+/**
+ * Aplica o upgrade de uma habilidade se o jogador tiver pontos suficientes.
+ * @param {string} key - A chave da habilidade a ser atualizada.
+ */
 function upgradeSkill(key) {
     const skill = config.skills.tree[key];
     const player = config.players[0];
@@ -297,9 +322,12 @@ function upgradeSkill(key) {
     }
 }
 
-// =============================================
-// RENDERIZAÇÃO
-// =============================================
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// > RENDERIZAÇÃO
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+/**
+ * Renderiza todos os elementos do jogo no canvas.
+ */
 function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const player = config.players[0];
@@ -309,7 +337,6 @@ function render() {
     projectile.renderProjectiles(ctx, state.projectiles);
     explosion.renderExplosions(ctx, state.explosions);
 
-    // Renderiza a aura de dano do jogador quando o modo de atração está ativo.
     if (player.mode === 'attract') {
         const effectiveRadius = player.isPoweredUp ? player.radius * 1.5 : player.radius;
         const auraColor = player.isPoweredUp ? '255, 215, 0' : '142, 45, 226';
@@ -321,7 +348,6 @@ function render() {
         ctx.stroke();
     }
 
-    // Renderiza o jogador.
     ctx.fillStyle = player.color;
     ctx.beginPath();
     ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
@@ -332,27 +358,28 @@ function render() {
     ctx.fillText(player.face, player.x, player.y);
 }
 
-// =============================================
-// LOOP PRINCIPAL E FÍSICA DO JOGO
-// =============================================
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// > LOOP PRINCIPAL E FÍSICA DO JOGO
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+/**
+ * Atualiza a física e a lógica do jogo a cada passo de tempo fixo.
+ * @param {number} deltaTime - O tempo decorrido desde a última atualização.
+ */
 function updatePhysics(deltaTime) {
     if (config.gamePaused) return;
     const player = config.players[0];
 
     handlePowerUpTimer();
 
-    // Gerencia o timer de invencibilidade do jogador
     if (player.invincibleTimer > 0) {
         player.invincibleTimer--;
     }
 
-    // Atualiza a animação da aura pulsante.
     const effectiveRadius = player.isPoweredUp ? player.radius * 1.5 : player.radius;
     let newAuraRadius = state.auraPulseRadius + 2;
     if (newAuraRadius > effectiveRadius) newAuraRadius = 0;
     state.setAuraPulseRadius(newAuraRadius);
 
-    // Atualiza todas as entidades do jogo.
     const particleUpdate = particle.updateParticles(state.particles, player, deltaTime, state.lastUpdateIndex);
     state.setParticles(particleUpdate.newParticles);
     state.setLastUpdateIndex(particleUpdate.newLastUpdateIndex);
@@ -366,7 +393,6 @@ function updatePhysics(deltaTime) {
     if (particleUpdate.absorbedXp > 0) {
         const finalXp = Math.round(particleUpdate.absorbedXp * (config.xpMultiplier || 1) * config.globalXpMultiplier);
         config.xp += finalXp;
-        // Atualiza a contagem de partículas absorvidas para o placar.
         if (particleUpdate.absorbedCount > 0) {
             config.particlesAbsorbed += particleUpdate.absorbedCount;
         }
@@ -401,52 +427,36 @@ function updatePhysics(deltaTime) {
             state.setExplosions([...state.explosions, ...enemyUpdate.newExplosions]);
         }
 
-        // Aplica o dano de colisão ao jogador, respeitando o tempo de invencibilidade.
         if (enemyUpdate.damageToPlayer > 0 && player.invincibleTimer <= 0) {
             player.health -= enemyUpdate.damageToPlayer;
             playSound('hit');
-            player.invincibleTimer = config.players[0].invincibilityCooldown; // Ativa a invencibilidade
+            player.invincibleTimer = config.players[0].invincibilityCooldown;
         }
 
-        // Adiciona XP ganho ao derrotar inimigos.
         if (enemyUpdate.xpGained > 0) {
             const finalXp = Math.round(enemyUpdate.xpGained * (config.xpMultiplier || 1) * config.globalXpMultiplier);
             config.xp += finalXp;
-            checkLevelUp(); // Verifica se o jogador subiu de nível
+            checkLevelUp();
         }
 
-        // Adiciona carga ao Big Bang.
         if (enemyUpdate.bigBangChargeGained > 0) {
             config.bigBangCharge = Math.min(100, config.bigBangCharge + enemyUpdate.bigBangChargeGained);
         }
 
-        // Adiciona novas partículas de cura ao mundo do jogo.
         if (enemyUpdate.healingParticles?.length > 0) {
             state.setParticles([...state.particles, ...enemyUpdate.healingParticles]);
         }
 
-        // Atualiza a contagem de inimigos destruídos para as missões.
         if (enemyUpdate.enemiesDefeated > 0) {
-             config.enemiesDestroyed += enemyUpdate.enemiesDefeated;
-             updateQuest('destroy50', enemyUpdate.enemiesDefeated);
+            config.enemiesDestroyed += enemyUpdate.enemiesDefeated;
+            updateQuest('destroy50', enemyUpdate.enemiesDefeated);
         }
     }
 
-    // CORREÇÃO CRÍTICA: Só chama `updateWave` se uma luta de chefe NÃO estiver ativa.
-    // Isso previne a condição de corrida onde uma nova onda normal começa no mesmo
-    // quadro em que um chefe deveria aparecer.
     if (!config.bossFightActive) {
         updateWave();
     }
 
-
-    // --- DETECÇÃO DE COLISÃO ---
-
-    // Colisão: Jogador vs Partículas Hostis. Esta lógica foi movida para particle.updateParticles.
-
-    // (O código antigo de colisão foi removido daqui para evitar processamento duplo e bugs)
-
-    // Colisão: Jogador vs Projéteis de Inimigos.
     let currentProjectiles = state.projectiles;
     for (let i = currentProjectiles.length - 1; i >= 0; i--) {
         const proj = currentProjectiles[i];
@@ -464,7 +474,6 @@ function updatePhysics(deltaTime) {
     }
     state.setProjectiles(currentProjectiles);
 
-    // Colisão: Jogador vs Explosões.
     state.explosions.forEach(exp => {
         const dx = player.x - exp.x;
         const dy = player.y - exp.y;
@@ -473,7 +482,6 @@ function updatePhysics(deltaTime) {
         }
     });
 
-    // --- VERIFICAÇÃO DE FIM DE JOGO ---
     if (player.health <= 0) {
         player.health = 0;
         if (!config.gamePaused) {
@@ -485,7 +493,10 @@ function updatePhysics(deltaTime) {
     }
 }
 
-/** O loop principal do jogo, que é chamado a cada frame pela `requestAnimationFrame`. */
+/**
+ * O loop principal do jogo, que é chamado a cada frame pela `requestAnimationFrame`.
+ * @param {number} timestamp - O timestamp fornecido pela `requestAnimationFrame`.
+ */
 function gameLoop(timestamp) {
     if (!state.gameLoopRunning) return;
     requestAnimationFrame(gameLoop);
@@ -499,10 +510,8 @@ function gameLoop(timestamp) {
         ui.updateFps(newFps);
     }
 
-    // Atualiza o acumulador de tempo.
     state.setAccumulator(state.accumulator + deltaTime);
 
-    // Executa a física em passos de tempo fixos.
     const fixedDeltaTime = 1000 / 60;
     while (state.accumulator >= fixedDeltaTime) {
         updatePhysics(fixedDeltaTime);
@@ -517,11 +526,13 @@ function gameLoop(timestamp) {
     render();
 }
 
-// =============================================
-// INICIALIZAÇÃO E CONFIGURAÇÃO DE CONTROLES
-// =============================================
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// > INICIALIZAÇÃO E CONFIGURAÇÃO DE CONTROLES
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-/** Pré-carrega as imagens dos inimigos para evitar que apareçam subitamente no jogo. */
+/**
+ * Pré-carrega as imagens dos inimigos para evitar que apareçam subitamente no jogo.
+ */
 function preloadImages() {
     for (const type of Object.values(config.enemySystem.types)) {
         if (type.imageUrl) {
@@ -532,12 +543,13 @@ function preloadImages() {
     }
 }
 
-/** Configura todos os `event listeners` para os controles do jogo. */
+/**
+ * Configura todos os `event listeners` para os controlos do jogo.
+ */
 function setupControls() {
     const player = config.players[0];
     const menu = document.getElementById('menu');
 
-    // Desbloqueia o áudio na primeira interação do usuário para contornar políticas de autoplay dos navegadores.
     const handleFirstInteraction = () => {
         unlockAudio();
         playMusic('mainTheme');
@@ -584,7 +596,7 @@ function setupControls() {
 
         toggleMenu(menu, false);
 
-        switch(action) {
+        switch (action) {
             case 'setMode':
                 player.mode = menuItem.getAttribute('data-mode');
                 ui.highlightActiveMode(player.mode);
@@ -645,7 +657,9 @@ function setupControls() {
     });
 }
 
-/** Função principal que inicializa o jogo quando a página é carregada. */
+/**
+ * Função principal que inicializa o jogo quando a página é carregada.
+ */
 function initGame() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -653,7 +667,6 @@ function initGame() {
     player.x = canvas.width / 2;
     player.y = canvas.height / 2;
 
-    // Armazena os valores base do jogador para serem usados nos upgrades de habilidades.
     if (player.baseRadius === undefined) {
         player.baseRadius = player.radius;
         player.baseAttractionDamage = player.attractionDamage;
@@ -669,12 +682,11 @@ function initGame() {
     preloadMusic('mainTheme');
     ui.updateHealthBar(player.health, player.maxHealth);
     ui.updateXPBar(config.xp, config.level);
-    ui.updateBigBangChargeBar(config.bigBangCharge); // Garante que a barra comece oculta
+    ui.updateBigBangChargeBar(config.bigBangCharge);
     updateStats();
     ui.updateQuestUI(config.quests.active);
     ui.toggleSoundUI(config.soundEnabled);
 
-    // Exibe o nome da galáxia do jogador.
     const username = localStorage.getItem('username') || 'Viajante';
     document.getElementById('galaxy-owner-display').textContent = `Galáxia de ${username}`;
 
@@ -682,7 +694,6 @@ function initGame() {
     state.setGameLoopRunning(true);
     requestAnimationFrame(gameLoop);
 
-    // Carrega a tabela de pontuação
     displayLeaderboard();
 }
 
@@ -692,5 +703,3 @@ window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 });
-
-// O estado não é mais exposto globalmente para segurança.
