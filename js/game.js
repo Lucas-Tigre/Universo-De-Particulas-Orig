@@ -495,16 +495,11 @@ function updatePhysics(deltaTime) {
             playSound('gameOver');
             stopMusic();
 
-            const score = config.particlesAbsorbed * 1 + config.enemiesDestroyed * 10 + config.level * 50 + config.wave.number * 20;
-            const username = localStorage.getItem('username') || 'Viajante';
-            submitScore(username, score);
-
             ui.showGameOver({
                 level: config.level,
                 wave: config.wave.number,
                 particlesAbsorbed: config.particlesAbsorbed,
                 enemiesDestroyed: config.enemiesDestroyed,
-                score: score
             });
         }
     }
