@@ -234,7 +234,7 @@ export const config = {
             attractionDamage: 4,  // Dano por segundo do vórtice de atração.
             isPoweredUp: false,
             powerUpTimer: 0,
-            invincibilityCooldown: 60, // Duração da invencibilidade em frames após sofrer dano.
+            invincibilityCooldown: 0, // Duração da invencibilidade em frames após sofrer dano.
             invincibleTimer: 0         // Timer atual da invencibilidade.
         }
     ],
@@ -271,7 +271,7 @@ export const config = {
                 color: '#FF9900',
                 huntRadius: 500,
                 preferredDistance: 250,
-                shootCooldown: 120,
+                shootCooldown: 2000,
                 projectileType: 'normal'
             },
             cosmic: {
@@ -293,7 +293,7 @@ export const config = {
                 face: ["🛰️", "📡"],
                 color: '#00FFFF',
                 healthMultiplier: 0.1,
-                shootCooldown: 180,
+                shootCooldown: 2000,
                 projectileType: 'explosive'
             },
             boss: {

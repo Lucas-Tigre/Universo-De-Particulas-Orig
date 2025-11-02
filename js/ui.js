@@ -121,13 +121,14 @@ export function updateQuestUI(activeQuests) {
 
 /**
  * Exibe a tela de fim de jogo com as estatísticas finais.
- * @param {{level: number, wave: number, particles: number, enemiesDestroyed: number}} stats - As estatísticas finais a serem exibidas.
+ * @param {{level: number, wave: number, particles: number, enemiesDestroyed: number, score: number}} stats - As estatísticas finais a serem exibidas.
  */
 export function showGameOver(stats) {
     document.getElementById('go-level').textContent = stats.level;
     document.getElementById('go-wave').textContent = stats.wave;
     document.getElementById('go-particles').textContent = stats.particlesAbsorbed;
     document.getElementById('go-enemies').textContent = stats.enemiesDestroyed;
+    document.getElementById('go-score').textContent = stats.score;
     createStars();
     document.getElementById('game-over-screen').style.display = 'flex';
 }
