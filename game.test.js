@@ -1,7 +1,7 @@
 import { config } from './js/config.js';
 import { spawnEnemy } from './js/enemy.js';
 import { checkLevelUp } from './js/utils.js';
-import { restartGame, initialQuests, activateBigBang } from './js/game.js';
+import { restartGame, initialQuests, activateBigBang, applyDamage } from './js/game.js';
 import { updateBigBangChargeBar } from './js/ui.js';
 import * as state from './js/state.js';
 
@@ -181,4 +181,40 @@ describe('Lógica Modular do Jogo', () => {
         // O teste para a posição dos átomos foi removido porque a funcionalidade foi desativada para corrigir um bug.
     });
 
+    describe('Função de Dano Segura (applyDamage)', () => {
+        it('deve subtrair o dano da vida do jogador quando o dano é um número válido', () => {
+            // Define a vida inicial do jogador.
+            config.players[0].health = 100;
+
+            // Aplica o dano.
+            applyDamage(config.players[0], 10);
+
+            // Verifica se a vida foi reduzida corretamente.
+            expect(config.players[0].health).toBe(90);
+        });
+
+        it('não deve alterar a vida do jogador quando o dano é NaN', () => {
+            config.players[0].health = 100;
+            applyDamage(config.players[0], NaN);
+            expect(config.players[0].health).toBe(100);
+        });
+
+        it('não deve alterar a vida do jogador quando o dano é undefined', () => {
+            config.players[0].health = 100;
+            applyDamage(config.players[0], undefined);
+            expect(config.players[0].health).toBe(100);
+        });
+
+        it('não deve alterar a vida do jogador quando o dano é null', () => {
+            config.players[0].health = 100;
+            applyDamage(config.players[0], null);
+            expect(config.players[0].health).toBe(100);
+        });
+
+        it('não deve alterar a vida do jogador quando o dano não é um número', () => {
+            config.players[0].health = 100;
+            applyDamage(config.players[0], 'cem'); // Passa uma string em vez de um número.
+            expect(config.players[0].health).toBe(100);
+        });
+    });
 });
