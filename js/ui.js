@@ -60,14 +60,9 @@ export function updateHealthBar(health, maxHealth) {
     if (!healthBar) return;
 
     healthBar.style.width = `${healthPercent}%`;
-
-    if (healthPercent > 60) {
-        healthBar.style.backgroundColor = '#00F5A0'; // Verde
-    } else if (healthPercent > 30) {
-        healthBar.style.backgroundColor = '#FFA500'; // Laranja
-    } else {
-        healthBar.style.backgroundColor = '#FF0000'; // Vermelho
-    }
+    healthBar.style.backgroundColor =
+        healthPercent > 60 ? '#00F5A0' :
+        healthPercent > 30 ? '#FFA500' : '#FF0000';
 
     if (healthPercent < 30) {
         healthBar.style.animation = 'pulse 1s infinite';
