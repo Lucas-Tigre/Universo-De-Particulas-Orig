@@ -9,7 +9,6 @@
 import { config } from './config.js';
 import * as state from './state.js';
 import * as ui from './ui.js';
-import { displayLeaderboard } from './ui.js';
 import * as particle from './particle.js';
 import * as enemy from './enemy.js';
 import * as projectile from './projectile.js';
@@ -486,22 +485,28 @@ function updatePhysics(deltaTime) {
     if (player.health <= 0) {
         player.health = 0;
         if (!config.gamePaused) {
-            config.gamePaused = true;
+            config.gamePaused = true; // Pausa o jogo imediatamente
             playSound('gameOver');
             stopMusic();
 
-            // Lógica de cálculo e envio de pontuação
-            const finalScore = (config.particlesAbsorbed * 1) + (config.enemiesDestroyed * 10) + (config.level * 50) + (config.wave.number * 20);
-            const username = localStorage.getItem('username') || 'Viajante';
-            submitScore(username, finalScore);
+            // Transforma a lógica de fim de jogo em uma função assíncrona
+            (async () => {
+                const finalScore = (config.particlesAbsorbed * 1) + (config.enemiesDestroyed * 10) + (config.level * 50) + (config.wave.number * 20);
+                const username = localStorage.getItem('username') || 'Viajante';
 
-            ui.showGameOver({
-                level: config.level,
-                wave: config.wave.number,
-                particlesAbsorbed: config.particlesAbsorbed,
-                enemiesDestroyed: config.enemiesDestroyed,
-                finalScore: finalScore
-            });
+                // Exibe a tela de Game Over PRIMEIRO
+                ui.showGameOver({
+                    level: config.level,
+                    wave: config.wave.number,
+                    particlesAbsorbed: config.particlesAbsorbed,
+                    enemiesDestroyed: config.enemiesDestroyed,
+                    finalScore: finalScore
+                });
+
+                // Envia a pontuação e DEPOIS atualiza o placar
+                await submitScore(username, finalScore);
+                await ui.displayLeaderboard();
+            })();
         }
     }
 }
@@ -707,7 +712,7 @@ function initGame() {
     state.setGameLoopRunning(true);
     requestAnimationFrame(gameLoop);
 
-    displayLeaderboard();
+    ui.displayLeaderboard();
 }
 
 // Configura os listeners de eventos globais.
