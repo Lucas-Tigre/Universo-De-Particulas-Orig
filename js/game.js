@@ -16,6 +16,7 @@ import * as projectile from './projectile.js';
 import * as explosion from './explosion.js';
 import { checkLevelUp as checkLevelUpLogic, showUnlockMessage, playSound, initSoundSystem, unlockAudio } from './utils.js';
 import { playMusic, stopMusic, preloadMusic } from './audio.js';
+import { submitScore } from './supabaseService.js';
 
 /**
  * Uma cópia profunda da configuração inicial das missões para garantir um reset consistente.
@@ -488,7 +489,19 @@ function updatePhysics(deltaTime) {
             config.gamePaused = true;
             playSound('gameOver');
             stopMusic();
-            ui.showGameOver({ level: config.level, wave: config.wave.number, particlesAbsorbed: config.particlesAbsorbed, enemiesDestroyed: config.enemiesDestroyed });
+
+            // Lógica de cálculo e envio de pontuação
+            const finalScore = (config.particlesAbsorbed * 1) + (config.enemiesDestroyed * 10) + (config.level * 50) + (config.wave.number * 20);
+            const username = localStorage.getItem('username') || 'Viajante';
+            submitScore(username, finalScore);
+
+            ui.showGameOver({
+                level: config.level,
+                wave: config.wave.number,
+                particlesAbsorbed: config.particlesAbsorbed,
+                enemiesDestroyed: config.enemiesDestroyed,
+                finalScore: finalScore
+            });
         }
     }
 }
