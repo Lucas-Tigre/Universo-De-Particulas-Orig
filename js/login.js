@@ -51,7 +51,7 @@ const showMsg = (text, type = "success") => {
   authMsg.className = `msg ${type}`;
 };
 
-// ===== LÓGICA GERAL (SEMPRE EXECUTA) =====
+// ===== LÓgica GERAL (SEMPRE EXECUTA) =====
 
 tabs.forEach(btn => {
   btn.addEventListener('click', () => {
@@ -92,10 +92,10 @@ if (supabase) {
     const senha = document.getElementById('regSenha').value;
 
     const { error } = await supabase.auth.signUp({
-      email, password: senha, options: { data: { full_name: nome, username: usuario } }
+      email, password: senha
     });
     if (error) return showMsg("Erro: " + error.message, "error");
-    showMsg("Conta criada! Verifique seu e-mail.", "success");
+    showMsg("Conta criada! Verifique seu e-mail para confirmar.", "success");
     registerForm.reset();
   });
 
