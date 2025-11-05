@@ -766,44 +766,6 @@ canvas {
     pointer-events: none;
 }
 
-.supernova {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    background: radial-gradient(circle, 
-        rgba(255,255,255,0.8) 0%, 
-        rgba(255,200,0,0.7) 20%, 
-        rgba(255,0,100,0.6) 40%, 
-        rgba(100,0,255,0.4) 60%, 
-        rgba(0,0,0,0) 80%);
-    z-index: 9999;
-    pointer-events: none;
-    opacity: 0;
-}
-
-.shockwave {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.8);
-    z-index: 9998;
-    pointer-events: none;
-    opacity: 0;
-}
-
-@keyframes supernova-explosion {
-    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
-    100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
-}
-
-@keyframes shockwave {
-    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; width: 10px; height: 10px; }
-    100% { transform: translate(-50%, -50%) scale(20); opacity: 0; width: 100px; height: 100px; }
-}
 
 @keyframes cosmic-flash {
     0% { background-color: rgba(255, 255, 255, 0); }
