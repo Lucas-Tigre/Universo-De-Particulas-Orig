@@ -10,7 +10,7 @@ body {
 
 .game-page,
 .main-page {
-    background: "url('assets/images/iniciog.png')";
+    background: none; /* Remove o gradiente da página do jogo */
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
