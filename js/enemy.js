@@ -241,6 +241,16 @@ export function updateEnemies(enemies, player, config, canvas, bigBangActive) {
         enemy.x += enemy.speedX;
         enemy.y += enemy.speedY;
 
+        // APLICAÇÃO DE DANO POR ATRAÇÃO (VÓRTICE)
+        // Se o jogador estiver no modo de atração e o inimigo estiver dentro do raio,
+        // aplica dano contínuo.
+        if (player.mode === 'attract' && dist < player.radius && !type.ignoresAttraction) {
+            // O dano é aplicado por segundo, então ajustamos pelo deltaTime.
+            const damagePerSecond = player.attractionDamage;
+            const damageThisFrame = damagePerSecond * (16.67 / 1000); // Converte dano/s para dano/frame
+            enemy.health -= damageThisFrame;
+        }
+
         const distPlayer = Math.sqrt(Math.pow(player.x - enemy.x, 2) + Math.pow(player.y - enemy.y, 2));
         if (distPlayer < enemy.radius + player.size) { // A verificação de `ignoresCollision` foi movida para ser mais específica.
             if (player.invincibleTimer <= 0) {
