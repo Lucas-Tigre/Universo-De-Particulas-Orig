@@ -623,7 +623,7 @@ function setupControls() {
                 toggleMenu(document.getElementById('galaxy-map'), true);
                 ui.showGalaxyMap(config.galaxies.list, config.galaxies.unlocked, (key) => {
                     config.galaxies.current = key;
-                    document.body.style.background = config.galaxies.list[key].background;
+                    document.body.style.backgroundImage = config.galaxies.list[key].background;
                     showUnlockMessage(`Galáxia ${config.galaxies.list[key].name} selecionada!`);
                     toggleMenu(document.getElementById('galaxy-map'), false);
                 });
@@ -707,6 +707,12 @@ function initGame() {
 
     const username = localStorage.getItem('username') || 'Viajante';
     document.getElementById('galaxy-owner-display').textContent = `Galáxia de ${username}`;
+
+    // Define o background inicial
+    const currentGalaxy = config.galaxies.list[config.galaxies.current];
+    if (currentGalaxy && currentGalaxy.background) {
+        document.body.style.backgroundImage = currentGalaxy.background;
+    }
 
     setupControls();
     state.setGameLoopRunning(true);
