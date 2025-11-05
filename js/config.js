@@ -193,7 +193,7 @@ export const config = {
                 unlockCondition: "Inicial",
                 particleColorRange: { h: [0, 360], s: [80, 90], l: [50, 70] },
                 // FUNDO 1: Imagem de fundo para a galáxia Clássico.
-                background: "url('assets/images/MapaIN.png')"
+                background: "url('assets/images/MapaFN.png')"
             },
             neon: {
                 name: "Neon",
@@ -201,15 +201,15 @@ export const config = {
                 unlockCondition: "Alcançar nível 5",
                 particleColorRange: { h: [280, 320], s: [100, 100], l: [60, 80] },
                 // FUNDO 2: Imagem de fundo para a galáxia Neon.
-                background: "url('assets/images/MapaME.png')"
+                background: "url('assets/images/MapaIN.png')"
             },
             fire: {
-                name: "Fim de Tudo",
+                name: "Inferno",
                 description: "Partículas flamejantes e inimigos furiosos.",
                 unlockCondition: "Derrotar 50 inimigos",
                 particleColorRange: { h: [10, 40], s: [80, 100], l: [50, 70] },
                 // FUNDO 3: Imagem de fundo para a galáxia Inferno.
-                background: "url('assets/images/MapaFN.png')"
+                background: "url('assets/images/MapaME.png')"
             },
         }
     },
