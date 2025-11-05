@@ -10,7 +10,7 @@ body {
 
 .game-page,
 .main-page {
-    background: none; /* Remove o gradiente da página do jogo */
+    background: "url('assets/images/iniciog.png')";
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
@@ -33,12 +33,12 @@ body {
     box-shadow: 0 0 8px currentColor; /* Melhoria visual */
 }
 
-@keyframes particle-fade { /* Nova animação adicionada */
+@keyframes particle-fade { 
     0% { opacity: 0.8; transform: translate(-15px, -15px) scale(1); }
     100% { opacity: 0; transform: translate(-15px, -15px) scale(0.5); }
 }
 
-/* ============== (SEU CÓDIGO ORIGINAL COMEÇA AQUI) ============== */
+
 canvas {
     display: block;
     width: 100vw;
