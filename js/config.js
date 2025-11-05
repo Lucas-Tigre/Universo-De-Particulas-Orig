@@ -371,6 +371,9 @@ export const config = {
     wave: { number: 1, enemiesToSpawn: 3, spawned: 0, timer: 0 }, // REBALANCEAMENTO: Reduzido o número inicial de inimigos.
     bigBangCharge: 0,
     bigBangChargeRate: 5, // Pontos de carga por inimigo derrotado.
+    isBigBangAnimating: false,
+    bigBangAnimationTimer: 0,
+    bigBangEffectTriggered: false,
 
     // =============================================
     // OUTRAS CONFIGURAÇÕES
