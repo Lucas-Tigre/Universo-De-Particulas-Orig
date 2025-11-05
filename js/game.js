@@ -685,6 +685,9 @@ function initGame() {
     player.x = canvas.width / 2;
     player.y = canvas.height / 2;
 
+    // Define a imagem de fundo inicial com base na galáxia atual
+    document.body.style.background = config.galaxies.list[config.galaxies.current].background;
+
     if (player.baseRadius === undefined) {
         player.baseRadius = player.radius;
         player.baseAttractionDamage = player.attractionDamage;
