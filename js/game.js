@@ -313,9 +313,6 @@ function upgradeSkill(key) {
         case 'attractRadius':
             player.radius = player.baseRadius * (1 + 0.20 * skill.currentLevel);
             break;
-        case 'vortexPower':
-            player.attractionDamage = player.baseAttractionDamage * (1 + 0.30 * skill.currentLevel);
-            break;
         case 'particleMastery':
             config.xpMultiplier = config.baseXpMultiplier * (1 + 0.20 * skill.currentLevel);
             break;
@@ -589,14 +586,13 @@ function setupControls() {
         switch (key) {
             case '1': player.mode = 'attract'; break;
             case '2': player.mode = 'repel'; break;
-            case '3': player.mode = 'vortex'; break;
             case '4': activateBigBang(); break;
         }
         ui.highlightActiveMode(player.mode);
     });
 
     window.addEventListener('keyup', (e) => {
-        if (['1', '2', '3'].includes(e.key)) {
+        if (['1', '2'].includes(e.key)) {
             player.mode = 'normal';
             ui.highlightActiveMode(player.mode);
         }

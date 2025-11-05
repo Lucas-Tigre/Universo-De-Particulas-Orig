@@ -231,7 +231,7 @@ export const config = {
             health: 100,
             maxHealth: 100,
             collisionDamage: 10,     // Dano que o jogador causa ao colidir com inimigos.
-            attractionDamage: 4,  // Dano por segundo do vórtice de atração.
+            attractionDamage: 0,  // Dano por segundo do vórtice de atração.
             isPoweredUp: false,
             powerUpTimer: 0,
             invincibilityCooldown: 0, // Duração da invencibilidade em frames após sofrer dano.
@@ -335,13 +335,6 @@ export const config = {
                 cost: 2,
                 maxLevel: 5,
                 effect: "Aumenta o raio de atração em 20% por nível.",
-                currentLevel: 0
-            },
-            vortexPower: {
-                name: "Poder do Vórtice",
-                cost: 3,
-                maxLevel: 3,
-                effect: "Aumenta o dano do vórtice em 30% por nível.",
                 currentLevel: 0
             },
             healthBoost: {
