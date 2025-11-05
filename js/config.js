@@ -231,7 +231,8 @@ export const config = {
             health: 100,
             maxHealth: 100,
             collisionDamage: 10,     // Dano que o jogador causa ao colidir com inimigos.
-            attractionDamage: 0,  // Dano por segundo do vórtice de atração.
+            attractionDamage: 2,  // Dano por segundo do vórtice de atração.
+            baseAttractionDamage: 2, // Dano base para ser usado como referência.
             isPoweredUp: false,
             powerUpTimer: 0,
             invincibilityCooldown: 0, // Duração da invencibilidade em frames após sofrer dano.
