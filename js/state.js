@@ -132,3 +132,21 @@ export function setAuraPulseRadius(radius) {
 export function setAccumulator(value) {
     accumulator = value;
 }
+
+/**
+ * Reseta todo o estado do jogo para os seus valores iniciais.
+ */
+export function resetState() {
+    particles = [];
+    enemies = [];
+    projectiles = [];
+    explosions = [];
+    lastUpdateIndex = 0;
+    lastTime = 0;
+    fps = 60;
+    fpsLastChecked = 0;
+    frameCount = 0;
+    gameLoopRunning = false;
+    auraPulseRadius = 0;
+    accumulator = 0;
+}

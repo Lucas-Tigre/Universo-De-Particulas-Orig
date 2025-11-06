@@ -128,3 +128,18 @@ export function checkLevelUp(level, xp, enemiesCount, bossFightActive) {
 
     return output;
 }
+
+/**
+ * Cria uma cópia profunda (deep clone) de um objeto.
+ * Essencial para evitar mutações de estado indesejadas, especialmente em configurações.
+ * @param {T} obj - O objeto a ser clonado.
+ * @returns {T} Uma cópia profunda do objeto.
+ * @template T
+ */
+export function deepClone(obj) {
+    if (obj === null || typeof obj !== 'object') {
+        return obj;
+    }
+    // Uma forma simples e eficaz de clonagem profunda para objetos serializáveis em JSON.
+    return JSON.parse(JSON.stringify(obj));
+}

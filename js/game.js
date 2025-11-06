@@ -752,7 +752,7 @@ function setupControls() {
 /**
  * Função principal que inicializa o jogo quando a página é carregada.
  */
-function initGame() {
+export function initGame() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     const player = config.players[0];
@@ -796,7 +796,10 @@ function initGame() {
 }
 
 // Configura os listeners de eventos globais.
-window.addEventListener('load', initGame);
+// Removido o window.addEventListener('load', initGame) para evitar race conditions com módulos.
+// A inicialização agora é chamada diretamente.
+initGame();
+
 window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
