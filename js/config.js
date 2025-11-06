@@ -3,6 +3,9 @@
  * @module js/config
  */
 
+// Importa a função de cópia profunda para garantir o isolamento do estado de configuração.
+import { deepClone } from './utils.js';
+
 /**
  * @typedef {Object} ParticleColorRange
  * @property {number[]} h - Variação de Matiz (Hue).
@@ -163,7 +166,7 @@
  * @property {Skin[]} skins.available - As skins disponíveis.
  * @property {string} skins.current - A skin atual.
  */
-export const config = {
+const initialConfig = {
     // =============================================
     // CONFIGURAÇÕES GERAIS DE JOGABILIDADE
     // =============================================
@@ -459,4 +462,15 @@ export const config = {
         ],
         current: 'default'
     }
+}
+
+// Cria uma cópia profunda da configuração inicial para ser usada como o estado de configuração mutável.
+export let config = deepClone(initialConfig);
+
+/**
+ * Reseta a configuração do jogo para o seu estado inicial.
+ * Essencial para garantir o isolamento entre os testes.
+ */
+export function resetConfig() {
+    config = deepClone(initialConfig);
 }
