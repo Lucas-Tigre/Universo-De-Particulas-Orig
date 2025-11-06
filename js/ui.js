@@ -266,6 +266,7 @@ export function showSkinsModal(skins, currentSkin, onSelect) {
     skins.forEach(skin => {
         const skinCard = document.createElement('div');
         skinCard.className = `skin-card ${skin.type} ${skin.id === currentSkin ? 'selected' : ''} ${skin.unlocked ? '' : 'locked'}`;
+        skinCard.setAttribute('data-skin-id', skin.id); // Adiciona o atributo para o teste
         skinCard.innerHTML = `
             <div class="skin-emoji">${skin.emoji}</div>
             <div class="skin-name">${skin.name}</div>
