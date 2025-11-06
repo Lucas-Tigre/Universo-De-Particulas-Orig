@@ -257,6 +257,14 @@ export function restartGame() {
     document.getElementById('game-over-screen').style.display = 'none';
     const player = config.players[0];
 
+    // CORREÇÃO: Garante que os valores de base são definidos se ainda não existirem
+    if (player.baseMaxHealth === undefined) {
+        player.baseMaxHealth = player.maxHealth;
+        player.baseRadius = player.radius;
+        player.baseAttractionDamage = player.attractionDamage;
+        config.baseXpMultiplier = 1;
+    }
+
     player.mode = 'attract';
     player.health = player.baseMaxHealth;
     player.isPoweredUp = false;
@@ -753,16 +761,27 @@ function setupControls() {
  * Função principal que inicializa o jogo quando a página é carregada.
  */
 export function initGame() {
+    const player = config.players[0];
+
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    const player = config.players[0];
     player.x = canvas.width / 2;
     player.y = canvas.height / 2;
 
+    // CORREÇÃO: Garante que os valores de base do jogador são definidos na inicialização.
+    // Isso evita que a vida comece como 'undefined' e cause um game over imediato.
+    if (player.baseMaxHealth === undefined) {
+        player.baseMaxHealth = player.maxHealth;
+    }
+    player.health = player.baseMaxHealth; // Garante que a vida seja restaurada no início.
+
     if (player.baseRadius === undefined) {
         player.baseRadius = player.radius;
+    }
+    if (player.baseAttractionDamage === undefined) {
         player.baseAttractionDamage = player.attractionDamage;
-        player.baseMaxHealth = player.maxHealth;
+    }
+    if (config.baseXpMultiplier === undefined) {
         config.baseXpMultiplier = 1;
         config.xpMultiplier = 1;
     }
