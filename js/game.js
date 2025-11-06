@@ -120,24 +120,11 @@ function updateQuest(questId, amount = 1) {
  * Ativa a habilidade Big Bang, causando dano massivo a todos os inimigos.
  */
 export function activateBigBang() {
-    if (config.bigBangCharge < 100) return;
+    if (config.bigBangCharge < 100 || config.isBigBangAnimating) return;
 
-    const enemies = state.enemies;
-    const remainingEnemies = enemies.filter(enemy => {
-        if (enemy.type === 'boss' || enemy.type === 'finalBoss') {
-            enemy.health -= enemy.maxHealth * 0.3;
-            return enemy.health > 0;
-        }
-        return false;
-    });
-    state.setEnemies(remainingEnemies);
-
-    document.getElementById('supernova').style.animation = 'supernova-explosion 1s forwards';
-    document.getElementById('shockwave').style.animation = 'shockwave 1.5s forwards';
-    setTimeout(() => {
-        document.getElementById('supernova').style.animation = '';
-        document.getElementById('shockwave').style.animation = '';
-    }, 1500);
+    config.isBigBangAnimating = true;
+    config.bigBangAnimationTimer = 5500; // 1.5s de tremor + 4s de clarão
+    config.bigBangEffectTriggered = false; // Garante que o estado seja resetado
 
     config.bigBangCharge = 0;
     playSound('explosion');
@@ -332,6 +319,14 @@ function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const player = config.players[0];
 
+    // Efeito de tremor da tela durante a animação do Big Bang
+    if (config.isBigBangAnimating && config.bigBangAnimationTimer > 4000) {
+        ctx.save();
+        const shakeX = (Math.random() - 0.5) * 20;
+        const shakeY = (Math.random() - 0.5) * 20;
+        ctx.translate(shakeX, shakeY);
+    }
+
     particle.renderParticles(ctx, state.particles);
     enemy.drawEnemies(ctx, state.enemies);
     projectile.renderProjectiles(ctx, state.projectiles);
@@ -356,6 +351,17 @@ function render() {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(player.face, player.x, player.y);
+
+    // Restaura o contexto do canvas após o tremor
+    if (config.isBigBangAnimating && config.bigBangAnimationTimer > 4000) {
+        ctx.restore();
+    }
+
+    // Efeito de clarão branco
+    if (config.isBigBangAnimating && config.bigBangAnimationTimer <= 4000) {
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
 }
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -368,6 +374,30 @@ function render() {
 function updatePhysics(deltaTime) {
     if (config.gamePaused) return;
     const player = config.players[0];
+
+    if (config.isBigBangAnimating) {
+        config.bigBangAnimationTimer -= deltaTime;
+
+        // Ativa o efeito de destruição quando o tremor acaba
+        if (config.bigBangAnimationTimer <= 4000 && !config.bigBangEffectTriggered) {
+            const enemies = state.enemies;
+            const remainingEnemies = enemies.filter(enemy => {
+                const type = config.enemySystem.types[enemy.typeKey] || {};
+                if (type.isBoss) { // Dano massivo em bosses
+                    enemy.health -= enemy.maxHealth * 0.3;
+                    return enemy.health > 0;
+                }
+                return false; // Remove inimigos normais
+            });
+            state.setEnemies(remainingEnemies);
+            config.bigBangEffectTriggered = true;
+        }
+
+        if (config.bigBangAnimationTimer <= 0) {
+            config.isBigBangAnimating = false;
+            config.bigBangEffectTriggered = false; // Reseta para a próxima vez
+        }
+    }
 
     handlePowerUpTimer();
 
