@@ -72,6 +72,44 @@ function triggerBossFight(level) {
 }
 
 /**
+ * Verifica se alguma galáxia nova pode ser desbloqueada com base no estado atual do jogo.
+ */
+function checkGalaxyUnlocks() {
+    if (config.level >= 5 && !config.galaxies.unlocked.includes('neon')) {
+        config.galaxies.unlocked.push('neon');
+        showUnlockMessage("Nova galáxia desbloqueada: Neon!");
+    }
+    if (config.enemiesDestroyed >= 50 && !config.galaxies.unlocked.includes('fire')) {
+        config.galaxies.unlocked.push('fire');
+        showUnlockMessage("Nova galáxia desbloqueada: Inferno!");
+    }
+}
+
+/**
+ * Verifica se alguma skin nova pode ser desbloqueada com base no progresso do jogador.
+ */
+function checkSkinUnlocks() {
+    config.skins.available.forEach(skin => {
+        if (!skin.unlocked) {
+            let unlocked = false;
+            if (skin.id === 'cosmic' && config.level >= 10) {
+                unlocked = true;
+            }
+            if (skin.id === 'blackhole' && config.enemiesDestroyed >= 100) {
+                unlocked = true;
+            }
+            // A condição para a skin 'ancient' (completar todas as missões) é mais complexa
+            // e pode ser adicionada aqui posteriormente.
+
+            if (unlocked) {
+                skin.unlocked = true;
+                showUnlockMessage(`Nova skin desbloqueada: ${skin.name}!`);
+            }
+        }
+    });
+}
+
+/**
  * Verifica se o jogador tem XP suficiente para subir de nível e lida com a lógica de progressão.
  */
 function checkLevelUp() {
@@ -89,6 +127,8 @@ function checkLevelUp() {
         config.skillPoints += levelUpResult.skillPointsGained;
         showUnlockMessage(levelUpResult.message);
         playSound('levelUp');
+        checkGalaxyUnlocks(); // Verifica unlocks de galáxia ao subir de nível
+        checkSkinUnlocks();   // Verifica unlocks de skin ao subir de nível
     }
 
     if (levelUpResult.bossToTrigger) {
@@ -482,6 +522,8 @@ function updatePhysics(deltaTime) {
         if (enemyUpdate.enemiesDefeated > 0) {
             config.enemiesDestroyed += enemyUpdate.enemiesDefeated;
             updateQuest('destroy50', enemyUpdate.enemiesDefeated);
+            checkGalaxyUnlocks(); // Verifica unlocks de galáxia ao derrotar inimigos
+            checkSkinUnlocks();   // Verifica unlocks de skin ao derrotar inimigos
         }
     }
 

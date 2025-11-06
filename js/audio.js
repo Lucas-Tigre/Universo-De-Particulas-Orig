@@ -70,11 +70,14 @@ function getAudioElement(trackName) {
     return audio;
 }
 
+import { config } from './config.js';
+
 /**
  * Toca uma faixa musical, fazendo um fade out da faixa atual e um fade in da nova.
  * @param {string} trackName - O nome da faixa a ser tocada.
  */
 export function playMusic(trackName) {
+    if (!config.soundEnabled) return;
     if (isFading || (currentTrack && currentTrack.trackName === trackName)) {
         return;
     }
@@ -117,6 +120,16 @@ export function playMusic(trackName) {
  */
 export function stopMusic() {
     if (!currentTrack || isFading) return;
+
+    // Se o som estiver desativado, apenas pare a música imediatamente.
+    if (!config.soundEnabled) {
+        if (currentTrack) {
+            currentTrack.audio.pause();
+            currentTrack.audio.currentTime = 0;
+            currentTrack = null;
+        }
+        return;
+    }
 
     isFading = true;
     let fadeOutInterval = setInterval(() => {
