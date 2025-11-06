@@ -123,7 +123,7 @@ export function activateBigBang() {
     if (config.bigBangCharge < 100 || config.isBigBangAnimating) return;
 
     config.isBigBangAnimating = true;
-    config.bigBangAnimationTimer = 5500; // 1.5s de tremor + 4s de clarão
+    config.bigBangAnimationTimer = 3500; // 1.5s de tremor + 2s de dissipação
     config.bigBangEffectTriggered = false; // Garante que o estado seja resetado
 
     config.bigBangCharge = 0;
@@ -320,7 +320,7 @@ function render() {
     const player = config.players[0];
 
     // Efeito de tremor da tela durante a animação do Big Bang
-    if (config.isBigBangAnimating && config.bigBangAnimationTimer > 4000) {
+    if (config.isBigBangAnimating && config.bigBangAnimationTimer > 2000) {
         ctx.save();
         const shakeX = (Math.random() - 0.5) * 20;
         const shakeY = (Math.random() - 0.5) * 20;
@@ -353,13 +353,15 @@ function render() {
     ctx.fillText(player.face, player.x, player.y);
 
     // Restaura o contexto do canvas após o tremor
-    if (config.isBigBangAnimating && config.bigBangAnimationTimer > 4000) {
+    if (config.isBigBangAnimating && config.bigBangAnimationTimer > 2000) {
         ctx.restore();
     }
 
-    // Efeito de clarão branco
-    if (config.isBigBangAnimating && config.bigBangAnimationTimer <= 4000) {
-        ctx.fillStyle = 'white';
+    // Efeito de clarão branco com dissipação (fade-out)
+    if (config.isBigBangAnimating && config.bigBangAnimationTimer <= 2000) {
+        // Calcula a opacidade. Começa em 1 (sólido) e vai até 0 (transparente).
+        const opacity = config.bigBangAnimationTimer / 2000;
+        ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 }
@@ -378,8 +380,8 @@ function updatePhysics(deltaTime) {
     if (config.isBigBangAnimating) {
         config.bigBangAnimationTimer -= deltaTime;
 
-        // Ativa o efeito de destruição quando o tremor acaba
-        if (config.bigBangAnimationTimer <= 4000 && !config.bigBangEffectTriggered) {
+        // Ativa o efeito de destruição quando o tremor acaba (em 2000ms)
+        if (config.bigBangAnimationTimer <= 2000 && !config.bigBangEffectTriggered) {
             const enemies = state.enemies;
             const remainingEnemies = enemies.filter(enemy => {
                 const type = config.enemySystem.types[enemy.typeKey] || {};
