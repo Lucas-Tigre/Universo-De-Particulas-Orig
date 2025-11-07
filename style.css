@@ -99,8 +99,8 @@ canvas {
 }
 
 .mobile-btn.active {
-    background: rgba(95, 20, 160, 0.9);
-    box-shadow: 0 0 15px rgba(106, 28, 173, 0.7),
+    background: rgba(61, 3, 112, 0.9);
+    box-shadow: 0 0 15px rgba(45, 6, 78, 0.7),
                 inset 0 0 10px rgba(255,255,255,0.3);
 }
 
