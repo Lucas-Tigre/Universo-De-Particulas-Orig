@@ -707,6 +707,7 @@ function setupControls() {
                     config.galaxies.current = key;
                     localStorage.setItem('selectedGalaxy', key); // Salva a escolha
                     document.body.style.backgroundImage = config.galaxies.list[key].background;
+                    particle.updateParticleColors(config.galaxies.list[key].particleColorRange);
                     showUnlockMessage(`Galáxia ${config.galaxies.list[key].name} selecionada!`);
                     toggleMenu(document.getElementById('galaxy-map'), false);
                 });

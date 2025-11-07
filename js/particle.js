@@ -6,6 +6,16 @@
 import { config } from './config.js';
 import { playSound } from './utils.js';
 
+let currentParticleColorRange = { ...config.galaxies.list.classic.particleColorRange };
+
+/**
+ * Atualiza a gama de cores das partículas com base na galáxia selecionada.
+ * @param {import('./config.js').ParticleColorRange} newRange - O novo objeto de gama de cores.
+ */
+export function updateParticleColors(newRange) {
+    currentParticleColorRange = { ...newRange };
+}
+
 /**
  * Um "pool" (piscina) de objetos para reutilizar partículas em vez de criar e destruir constantemente.
  * @type {Array<Object>}
@@ -36,7 +46,10 @@ export function getParticle(player, x, y) {
         p.x = posX;
         p.y = posY;
         p.size = Math.random() * 4 + 2;
-        p.color = `hsl(${Math.random() * 360}, 80%, 60%)`;
+        const h = currentParticleColorRange.h[0] + Math.random() * (currentParticleColorRange.h[1] - currentParticleColorRange.h[0]);
+        const s = currentParticleColorRange.s[0] + Math.random() * (currentParticleColorRange.s[1] - currentParticleColorRange.s[0]);
+        const l = currentParticleColorRange.l[0] + Math.random() * (currentParticleColorRange.l[1] - currentParticleColorRange.l[0]);
+        p.color = `hsl(${h}, ${s}%, ${l}%)`;
         p.speedX = (Math.random() - 0.5) * 3;
         p.speedY = (Math.random() - 0.5) * 3;
         p.trail = [];
@@ -76,10 +89,15 @@ export function createParticle(x, y) {
     if (Math.random() < 0.02) {
         particleType = { color: 'gold', size: 10, xp: 50, special: 'powerup' };
     } else {
+        const h = currentParticleColorRange.h[0] + Math.random() * (currentParticleColorRange.h[1] - currentParticleColorRange.h[0]);
+        const s = currentParticleColorRange.s[0] + Math.random() * (currentParticleColorRange.s[1] - currentParticleColorRange.s[0]);
+        const l = currentParticleColorRange.l[0] + Math.random() * (currentParticleColorRange.l[1] - currentParticleColorRange.l[0]);
+        const color = `hsl(${h}, ${s}%, ${l}%)`;
+
         const types = [
-            { color: `hsl(${Math.random() * 60 + 180}, 80%, 60%)`, size: 3, xp: 2 },
-            { color: `hsl(${Math.random() * 60 + 60}, 80%, 60%)`, size: 5, xp: 5 },
-            { color: `hsl(${Math.random() * 60 + 300}, 80%, 60%)`, size: 2, xp: 7, special: 'speed' },
+            { color: color, size: 3, xp: 2 },
+            { color: color, size: 5, xp: 5 },
+            { color: color, size: 2, xp: 7, special: 'speed' },
         ];
         particleType = Math.random() > 0.8 ? types[Math.floor(Math.random() * types.length)] : types[0];
     }
