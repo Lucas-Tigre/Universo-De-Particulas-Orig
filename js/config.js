@@ -204,7 +204,7 @@ export const config = {
                 background: "url('assets/images/MapaIN.png')"
             },
             fire: {
-                name: "Inferno",
+                name: "O Absoluto",
                 description: "Partículas flamejantes e inimigos furiosos.",
                 unlockCondition: "Derrotar 50 inimigos",
                 particleColorRange: { h: [10, 40], s: [80, 100], l: [50, 70] },

@@ -729,6 +729,8 @@ function setupControls() {
                     config.skins.current = id;
                     player.face = config.skins.available.find(s => s.id === id).emoji;
                     showUnlockMessage(`Skin selecionada!`);
+                    // CORREÇÃO: Despausa o jogo após a seleção da skin.
+                    toggleMenu(document.getElementById('skins-modal'), false);
                 });
                 break;
             case 'resetGame':

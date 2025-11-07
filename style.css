@@ -8,15 +8,6 @@ body {
     -webkit-tap-highlight-color: transparent; /* Adicionado */
 }
 
-.game-page,
-.main-page {
-    background: "url('assets/images/Iniciog.png')";
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-attachment: fixed;
-}
-
 /* ========= PARTÍCULAS OTIMIZADAS (MELHORIA ADICIONADA) ========= */
 .particle-trail {
     position: absolute;
