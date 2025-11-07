@@ -205,9 +205,7 @@ export function showGalaxyMap(galaxies, unlockedGalaxies, onSelect) {
         `;
 
         if (isUnlocked) {
-            const newGalaxyEl = galaxyEl.cloneNode(true);
-            galaxyEl.parentNode?.replaceChild(newGalaxyEl, galaxyEl);
-            newGalaxyEl.addEventListener('click', () => {
+            galaxyEl.addEventListener('click', () => {
                 onSelect(key);
                 map.style.display = 'none';
             });
@@ -273,10 +271,10 @@ export function showSkinsModal(skins, currentSkin, onSelect) {
             ${!skin.unlocked ? `<div class="skin-requirement">${skin.unlockCondition}</div>` : ''}
         `;
         if (skin.unlocked) {
-            const newSkinCard = skinCard.cloneNode(true);
-            skinCard.parentNode?.replaceChild(newSkinCard, skinCard);
-            newSkinCard.addEventListener('click', () => {
+            skinCard.addEventListener('click', () => {
                 onSelect(skin.id);
+                // Opcional: fechar o modal após a seleção
+                modal.style.display = 'none';
             });
         }
         grid.appendChild(skinCard);
