@@ -705,6 +705,7 @@ function setupControls() {
                 toggleMenu(document.getElementById('galaxy-map'), true);
                 ui.showGalaxyMap(config.galaxies.list, config.galaxies.unlocked, (key) => {
                     config.galaxies.current = key;
+                    localStorage.setItem('selectedGalaxy', key); // Salva a escolha
                     document.body.style.backgroundImage = config.galaxies.list[key].background;
                     showUnlockMessage(`Galáxia ${config.galaxies.list[key].name} selecionada!`);
                     toggleMenu(document.getElementById('galaxy-map'), false);
@@ -808,7 +809,12 @@ export function initGame() {
     const username = localStorage.getItem('username') || 'Viajante';
     document.getElementById('galaxy-owner-display').textContent = `Galáxia de ${username}`;
 
-    // Define o background inicial
+    // Define o background inicial, carregando a preferência do jogador
+    const savedGalaxy = localStorage.getItem('selectedGalaxy');
+    if (savedGalaxy && config.galaxies.list[savedGalaxy]) {
+        config.galaxies.current = savedGalaxy;
+    }
+
     const currentGalaxy = config.galaxies.list[config.galaxies.current];
     if (currentGalaxy && currentGalaxy.background) {
         document.body.style.backgroundImage = currentGalaxy.background;
@@ -824,6 +830,11 @@ export function initGame() {
 // Configura os listeners de eventos globais.
 // Removido o window.addEventListener('load', initGame) para evitar race conditions com módulos.
 // A inicialização agora é chamada diretamente.
+
+// Expondo o 'config' para o escopo global para permitir a manipulação em testes
+if (typeof window.exposeConfig === 'function') {
+    window.exposeConfig(config);
+}
 initGame();
 
 window.addEventListener('resize', () => {
