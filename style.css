@@ -5,13 +5,6 @@ body {
     font-family: 'Arial', sans-serif;
     user-select: none;
     -webkit-tap-highlight-color: transparent; /* Adicionado */
-    background-color: #000; /* Garante que não haja flash de tela branca */
-}
-
-#game-container {
-    display: flex;
-    width: 100vw;
-    height: 100vh;
 }
 
 /* ========= PARTÍCULAS OTIMIZADAS (MELHORIA ADICIONADA) ========= */
@@ -1144,4 +1137,434 @@ canvas {
 @keyframes float {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-15px); }
+}
+
+/* =================================
+   ESTILOS DA PÁGINA INICIAL (NOVO)
+   ================================= */
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.main-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: white;
+}
+
+.main-header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3.5rem;
+    margin: 0;
+    text-shadow: 0 0 15px #fff, 0 0 25px #00f, 0 0 35px #00f;
+}
+
+.main-header .subtitle {
+    font-size: 1.2rem;
+    color: #ccc;
+    margin-top: 0.5rem;
+}
+
+.content-wrapper {
+    display: flex;
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.left-column, .right-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.card {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 2rem;
+    border-radius: 10px;
+    border: 1px solid #4A00E0;
+    box-shadow: 0 0 20px rgba(74, 0, 224, 0.5);
+    color: white;
+}
+
+.card h2 {
+    font-family: 'Orbitron', sans-serif;
+    margin-top: 0;
+    color: #00F5A0;
+    border-bottom: 1px solid #4A00E0;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Estilos dos Formulários de Autenticação */
+.auth-form .form-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.auth-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #ccc;
+    font-weight: 300;
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid #4A00E0;
+    border-radius: 5px;
+    color: white;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.auth-form button[type="submit"] {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(to right, #4a00e0, #8e2de2);
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 1rem; /* Adicionado para espaçamento */
+}
+
+.auth-form button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(74, 0, 224, 0.6);
+}
+
+/* Estilos da Seção "Como Jogar" */
+#how-to-play ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+#how-to-play li {
+    margin-bottom: 1rem;
+    line-height: 1.5;
+    font-weight: 300;
+}
+
+#how-to-play strong {
+    color: #00F5A0;
+    font-weight: 700;
+}
+
+#how-to-play .goal {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #4A00E0;
+    font-style: italic;
+    color: #ccc;
+}
+
+/* Estilos da Seção "Sobre a Equipe" */
+#about-team p {
+    line-height: 1.6;
+    font-weight: 300;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .content-wrapper {
+        flex-direction: column;
+    }
+    .main-header h1 {
+        font-size: 2.5rem;
+    }
+}
+
+/* =================================
+   ESTILOS DO MODAL DE LOGIN (NOVO)
+   ================================= */
+
+#login-trigger-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1001;
+}
+
+#login-trigger-btn {
+    background: linear-gradient(to right, #4a00e0, #8e2de2);
+    border: none;
+    color: white;
+    padding: 0.9rem 1.5rem; /* Aumentado */
+    border-radius: 25px;   /* Aumentado */
+    cursor: pointer;
+    font-size: 1.1rem;      /* Aumentado */
+    font-weight: 700;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+#login-trigger-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(74, 0, 224, 0.6);
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    color: white; /* Garante que o texto dentro do modal seja branco por padrão */
+    background: #090A0F;
+    padding: 2rem;
+    border-radius: 10px;
+    border: 1px solid #4A00E0;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 0 30px rgba(74, 0, 224, 0.6);
+    position: relative;
+    animation: slide-down 0.3s ease-out;
+}
+
+@keyframes slide-down {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 2rem;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-modal-btn:hover {
+    color: white;
+}
+
+/* Estilos do botão Iniciar Jogo */
+#start-game-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(to right, #00b09b, #96c93d);
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#start-game-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 176, 155, 0.5);
+}
+
+/* Estilos do Leaderboard Fixo */
+.leaderboard-container {
+    position: fixed;
+    top: 65px; /* Abaixo do botão de menu */
+    right: 15px;
+    width: 280px;
+    background: rgba(0, 0, 0, 0.85);
+    border-radius: 10px;
+    padding: 15px;
+    color: white;
+    z-index: 999; /* Abaixo do menu (1000) */
+    box-shadow: 0 0 20px rgba(74, 0, 224, 0.4);
+    border: 1px solid rgba(74, 0, 224, 0.2);
+    backdrop-filter: blur(4px);
+}
+
+.leaderboard-container h2 {
+    font-size: 1.2em;
+    color: #00F5A0;
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-align: center;
+    border-bottom: 1px solid #4A00E0;
+    padding-bottom: 8px;
+}
+
+.leaderboard-container table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+
+.leaderboard-container th, .leaderboard-container td {
+    padding: 6px;
+    text-align: left;
+}
+
+.leaderboard-container th {
+    color: #8E2DE2;
+}
+
+.leaderboard-container td:last-child {
+    text-align: right;
+    font-weight: bold;
+    color: #00F5A0;
+}
+
+.leaderboard-container tr:nth-child(even) {
+    background: rgba(74, 0, 224, 0.1);
+}
+
+#start-game-btn:disabled {
+    background: #555;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.thematic-prompt {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #aaa;
+    font-style: italic;
+}
+
+#password-criteria {
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 0.5rem;
+    line-height: 1.4;
+}
+
+.error-message {
+    color: #ff5555;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    min-height: 1.2rem;
+}
+
+.login-extras {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.extra-link {
+    color: #aaa;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.extra-link:hover {
+    color: #00F5A0;
+}
+
+.social-login {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.social-login p {
+    margin-bottom: 1rem;
+    color: #aaa;
+}
+
+.google-btn {
+    background-color: #4285F4;
+    color: white;
+    border: none;
+    padding: 0.8rem 1rem;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.google-btn:hover {
+    background-color: #357ae8;
+}
+
+.google-btn .fa-google {
+    font-size: 1.2rem;
+}
+
+.close-page-btn {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    font-size: 2.5rem;
+    color: #aaa;
+    text-decoration: none;
+    z-index: 1001;
+    transition: all 0.2s;
+}
+
+.close-page-btn:hover {
+    color: white;
+    transform: scale(1.1);
+}
+
+#galaxy-owner-display {
+    position: fixed;
+    top: 35px; /* Abaixo da barra de vida */
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ccc;
+    font-size: 14px;
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 0 5px black;
+    z-index: 50;
+    pointer-events: none;
+}
+
+#start-adventure-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(to right, #00b09b, #96c93d);
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+#start-adventure-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 176, 155, 0.5);
 }
