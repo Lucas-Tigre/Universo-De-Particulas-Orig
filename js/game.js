@@ -737,6 +737,11 @@ function setupControls() {
             case 'toggleSound':
                 config.soundEnabled = !config.soundEnabled;
                 ui.toggleSoundUI(config.soundEnabled);
+                if (config.soundEnabled) {
+                    playMusic('mainTheme');
+                } else {
+                    stopMusic();
+                }
                 break;
         }
     });
